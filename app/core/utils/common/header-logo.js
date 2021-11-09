@@ -1,13 +1,30 @@
-import * as React from 'react';
-import { Image } from 'react-native';
+import * as React from 'react'
+import { Image, StyleSheet, View } from 'react-native';
 
 function LogoTitle() {
     return (
-      <Image
-        style={{ width: 50, height: 50, }}
-        source={require('./../../assets/common/small-logo.png')}
-      />
+        <View style={logoStyle.logoContainer}>
+            <Image
+                style={logoStyle.logo}
+                source={require('./../../assets/common/small-logo.png')}
+            />
+        </View>
     );
 }
+
+const logoStyle = StyleSheet.create({
+    logoContainer: {
+        width: 36.0,
+        height: 36.0,
+        backgroundColor: '#215a75',
+        borderRadius: 4.0,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 32.0,
+        height: 32.0,
+    },
+});
 
 export default LogoTitle;
