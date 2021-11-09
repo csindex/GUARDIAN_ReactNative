@@ -1,24 +1,30 @@
-import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+// import { Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as Screens from './app/core/utils/common/screens';
+import LogoTitle from './app/core/utils/common/header-logo';
 
-export default function App() {
-  console.log('App executed!');
-  
-  return (
-    <View style={styles.container}>
-      <Text>Yay! Gawas jud. Waaah nice:)</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const Stack = createNativeStackNavigator();
 
-}
+function App() {
+    // console.log('enter App');
+    return (
+        <NavigationContainer>
+            <Stack.Navigator 
+                initialRouteName="LandingScreen"
+                screenOptions={{
+                    headerStyle: {
+                        backgroundColor: '#174052',
+                    },
+                    headerTintColor: '#fff',
+                    headerTitle: (props) => <LogoTitle {...props} />
+                }}
+            >
+                <Stack.Screen name="LandingScreen" component={Screens.LandingScreen}/>
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+};
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
