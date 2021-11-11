@@ -38,7 +38,9 @@ export default function LoginScreen() {
                     backgroundColor='#174052'
                 />
                 <View style={styles.mainContainerBG}>
-                    <Text style={{fontSize:36.0}}>GUARDIAN</Text>
+                    <View style={styles.formContainer}>
+                        <Text></Text>
+                    </View>
                 </View>
             </SafeAreaView>
         );
