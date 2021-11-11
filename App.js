@@ -4,6 +4,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Screens from './app/core/utils/common/screens';
 import LogoTitle from './app/core/utils/common/header-logo';
+import FontAwesome, {
+    SolidIcons,
+    RegularIcons,
+    BrandIcons,
+    parseIconFromClassName,
+} from 'react-native-fontawesome';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +21,7 @@ function App() {
                 initialRouteName="LandingScreen"
                 screenOptions={{
                     headerStyle: {
-                        backgroundColor: '#174052',
+                        backgroundColor: '#174052', //'rgba(23, 64, 82, 0.8)'
                     },
                     headerTintColor: '#fff',
                     headerTitle: (props) => <LogoTitle {...props} />,
@@ -29,5 +35,11 @@ function App() {
         </NavigationContainer>
     );
 };
+
+function registerBtn({navigation}) {
+    return (
+        <View></View>
+    );
+}
 
 export default App;

@@ -27,4 +27,9 @@ export default StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    formContainer: {
+        width: '100%',
+        backgroundColor: '#fff',
+        padding: 24.0,
+    },
 });

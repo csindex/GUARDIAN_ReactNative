@@ -12,6 +12,12 @@ function LogoTitle() {
     );
 }
 
+function LoginBtn() {
+    return (
+        <View></View>
+    );
+}
+
 const logoStyle = StyleSheet.create({
     logoContainer: {
         width: 36.0,
@@ -24,6 +30,9 @@ const logoStyle = StyleSheet.create({
     logo: {
         width: 32.0,
         height: 32.0,
+    },
+    registerBtnContainer: {
+
     },
 });
 

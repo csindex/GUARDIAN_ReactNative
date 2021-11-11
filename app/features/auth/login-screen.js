@@ -39,7 +39,7 @@ export default function LoginScreen() {
                 />
                 <View style={styles.mainContainerBG}>
                     <View style={styles.formContainer}>
-                        <Text></Text>
+                        <Text>asdf</Text>
                     </View>
                 </View>
             </SafeAreaView>
