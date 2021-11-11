@@ -13,7 +13,7 @@ import styles from "./../styles"
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 
-function LandingScreen() {
+function LandingScreen({ navigation }) {
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
@@ -49,6 +49,7 @@ function LandingScreen() {
                             <TouchableOpacity 
                                 style={lsStyles.loginBtn} 
                                 activeOpacity={0.6}
+                                onPress={() => navigation.navigate('LoginScreen')}
                             >
                                 <Text style={lsStyles.loginBtnText}>Login</Text>
                             </TouchableOpacity>

@@ -19,4 +19,12 @@ export default StyleSheet.create({
         paddingStart: 56.0,
         paddingEnd: 56.0,
     },
+    mainContainerBG: {
+        width: '100%',
+        height: '100%',
+        padding: 8.0,
+        backgroundColor: '#dddddd',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 });

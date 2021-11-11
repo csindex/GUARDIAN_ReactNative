@@ -18,10 +18,13 @@ function App() {
                         backgroundColor: '#174052',
                     },
                     headerTintColor: '#fff',
-                    headerTitle: (props) => <LogoTitle {...props} />
+                    headerTitle: (props) => <LogoTitle {...props} />,
+                    headerLeft: () => null,
+                    headerBackVisible: false,
                 }}
             >
                 <Stack.Screen name="LandingScreen" component={Screens.LandingScreen}/>
+                <Stack.Screen name="LoginScreen" component={Screens.LoginScreen}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
