@@ -31,15 +31,10 @@ export default StyleSheet.create({
         width: '100%',
         backgroundColor: '#fff',
         padding: 24.0,
+        borderRadius: 8.0,
     },
     iconStyle: {
         fontSize: 36.0,
         color: '#000',
-    },
-    input: {
-        height: 40,
-        margin: 12,
-        borderWidth: 1,
-        padding: 10,
     },
 });
