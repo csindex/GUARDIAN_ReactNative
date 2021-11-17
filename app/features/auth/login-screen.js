@@ -66,7 +66,7 @@ export default function LoginScreen({ navigation }) {
                     console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
                         navigation.navigate('PostScreen', {
-                            token: response.data.token,
+                            response
                         });
                     }
                 })

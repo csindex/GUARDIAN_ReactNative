@@ -42,7 +42,7 @@ function App() {
                             backgroundColor: '#174052',
                         },
                         headerLeft: () => <Header.LogoTitle/>,
-                        headerRight: ({route}) => <Header.ProfPicMenuIcon {...route}/>,
+                        headerRight: ({route, navigation}) => <Header.ProfPicMenuIcon{...(route, navigation)}/>,
                         headerTitle: () => null,
                     }}
                 />

@@ -19,6 +19,7 @@ import {
     Menu,
     MenuItem 
 } from 'react-native-material-menu';
+import { NavigationContainer } from '@react-navigation/native';
 
 function LogoTitle() {
     return (
@@ -31,10 +32,11 @@ function LogoTitle() {
     );
 }
 
-const ProfPicMenuIcon = (route) => {
+const ProfPicMenuIcon = (route, navigation) => {
     const [visible, setVisible] = React.useState(false);
     const hideMenu = () => setVisible(false);
     const showMenu = () => setVisible(true);
+    const baseUrl = 'http://10.128.50.136:3000';
     // const { token } = route.params;
     const logout = async () => {
         console.log('token - ' + JSON.stringify(route));
@@ -44,13 +46,14 @@ const ProfPicMenuIcon = (route) => {
                     'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjBiNGRiNmU1ZWRjOTIyMDg4YjAwNDJhIn0sImlhdCI6MTYzNjcwNzg4NH0.qjlOssnIzLOuIQmbVdZY1HzDqX3GjkNkBiIE2AXjkNU',
                 },
             };
-            console.log(`${baseUrl}/api/users/online/${email}`);
+            // console.log(`${baseUrl}/api/users/online/${email}`);
             await axios.delete(baseUrl + '/api/users/online/cfj@abc.com', config)
                 .then(res => {
                     alert('logout successful: ' + res.data.msg);
-                }).catch(err => console.log('error logout ' + err.response.data.msg));
+                    navigation.navigate('LandingScreen');
+                }).catch(err => console.log('error logout ' + err));
         } catch (error) {
-            alert('oyy ' + error);
+            alert('oyy ?' + error);
         }
     };
     return (
