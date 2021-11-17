@@ -1,5 +1,7 @@
 import * as React from 'react'
 import { Image, StyleSheet, View } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faUserAlt, faSignInAlt } from '@fortawesome/free-solid-svg-icons';
 
 function LogoTitle() {
     return (
@@ -12,9 +14,21 @@ function LogoTitle() {
     );
 }
 
-function LoginBtn() {
+function registerBtn() {
     return (
-        <View></View>
+        <View style={logoStyle.btnContainer}>
+            <FontAwesomeIcon icon={ faUserAlt }/>
+            <Text>Register</Text>
+        </View>
+    );
+}
+
+function loginBtn() {
+    return (
+        <View style={logoStyle.btnContainer}>
+            <FontAwesomeIcon icon={ faSignInAlt }/>
+            <Text>Login</Text>
+        </View>
     );
 }
 
@@ -31,9 +45,9 @@ const logoStyle = StyleSheet.create({
         width: 32.0,
         height: 32.0,
     },
-    registerBtnContainer: {
-
+    btnContainer: {
+        flexDirection: 'row',
     },
 });
 
-export default LogoTitle;
+export { LogoTitle, loginBtn, registerBtn };
