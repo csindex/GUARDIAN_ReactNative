@@ -19,7 +19,7 @@ import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 
 const baseUrl = 'http://10.128.50.136:3000';
 
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);
@@ -46,7 +46,7 @@ export default function LoginScreen({navigation}) {
         return value;
         };
     };
-    const onLogin = async () => {
+    const login = async () => {
         if (email === '' || password === '') {
             alert("Email or Password is invalid");
             return;
@@ -62,7 +62,14 @@ export default function LoginScreen({navigation}) {
             const body = JSON.stringify({email, password});
             console.log(config + ', ' + body);
             /*const response = */await axios.post(baseUrl + '/api/auth', body, config)
-                .then(response => console.log(response.data))
+                .then(response => {
+                    console.log(response.data);
+                    if (!(JSON.stringify(response.data).includes('error'))) {
+                        navigation.navigate('PostScreen', {
+                            token: response.data.token,
+                        });
+                    }
+                })
                 .catch(err => {
                     const errors = err.response.data.errors;
                     if (errors) {
@@ -151,7 +158,7 @@ export default function LoginScreen({navigation}) {
                         <TouchableOpacity
                             style={lsStyles.loginBtnContainer}
                             activeOpacity={0.6}
-                            onPress={onLogin}
+                            onPress={login}
                         >
                             <Text style={lsStyles.loginBtnText}>Log-in</Text>
                         </TouchableOpacity>
@@ -172,7 +179,7 @@ const lsStyles = StyleSheet.create({
     mainLabel: {
         fontSize: 36.0,
         color: '#215a75',
-        fontFamily: 'Inter-Black',
+        fontFamily: 'Inter-Bold',
         letterSpacing: 1.5,
     },
     iconLabelContainer: {
