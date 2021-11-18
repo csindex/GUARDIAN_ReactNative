@@ -12,6 +12,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./../styles"
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
+import * as SecureStore from 'expo-secure-store';
+import * as Constants from './constants';
 
 function LandingScreen({ navigation }) {
     let [fontsLoaded] = useFonts({
@@ -23,7 +25,21 @@ function LandingScreen({ navigation }) {
         'Inter-SemiBold': require('./../../assets/fonts/Inter-SemiBold.otf'),
         'Inter-Thin': require('./../../assets/fonts/Inter-Thin.otf'),
     });
-
+    // const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+    async function getIsAuthenticated() {
+        const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
+        const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
+        console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
+        if (JSON.parse(f)) {
+            console.log('return true');
+            // setIsAuthenticated(true);
+            navigation.navigate('PostScreen', {token: token});
+        }
+    }
+    React.useEffect(() => {
+        console.log('useEffect');
+        getIsAuthenticated();
+    }, []);
     if (!fontsLoaded) {
         return <AppLoading/>;
     } else {

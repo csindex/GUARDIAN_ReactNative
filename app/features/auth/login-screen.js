@@ -16,8 +16,8 @@ import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-
-const baseUrl = 'http://10.128.50.136:3000';
+import * as Constants from './../../core/utils/common/constants';
+import * as SecureStore from 'expo-secure-store';
 
 export default function LoginScreen({ navigation }) {
     const [email, setEmail] = React.useState("");
@@ -34,6 +34,20 @@ export default function LoginScreen({ navigation }) {
     const onTogglePassword = (f) => {
         setHidePassword(f);
     }
+    async function saveKeys(token) {
+        await SecureStore.setItemAsync(Constants.EMAIL_KEY, email);
+        await SecureStore.setItemAsync(Constants.TOKEN_KEY, token);
+        await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(true));
+    }
+    async function getEmail() {
+        const e = await SecureStore.getItemAsync(Constants.EMAIL_KEY);
+        if (e) {
+            setEmail(e);
+        }
+    }
+    React.useEffect(() => {
+        getEmail();
+    }, []);
     const getCircularReplacer = () => {
         const seen = new WeakSet();
         return (key, value) => {
@@ -61,12 +75,13 @@ export default function LoginScreen({ navigation }) {
             };
             const body = JSON.stringify({email, password});
             console.log(config + ', ' + body);
-            /*const response = */await axios.post(baseUrl + '/api/auth', body, config)
+            /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
                 .then(response => {
                     console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
+                        saveKeys(JSON.stringify(response.data.token));
                         navigation.navigate('PostScreen', {
-                            response
+                            token: response.data.token,
                         });
                     }
                 })
@@ -97,8 +112,8 @@ export default function LoginScreen({ navigation }) {
                     'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjBiNGRiNmU1ZWRjOTIyMDg4YjAwNDJhIn0sImlhdCI6MTYzNjcwNzg4NH0.qjlOssnIzLOuIQmbVdZY1HzDqX3GjkNkBiIE2AXjkNU',
                 },
             };
-            console.log(`${baseUrl}/api/users/online/${email}`);
-            await axios.delete(baseUrl + '/api/users/online/' + email, config)
+            console.log(`${Constants.BASE_URL}/api/users/online/${email}`);
+            await axios.delete(Constants.BASE_URL + '/api/users/online/' + email, config)
                 .then(res => {
                     alert('logout successful: ' + res.data.msg);
                 }).catch(err => console.log('error logout ' + err.response.data.msg));

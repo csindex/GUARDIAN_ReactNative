@@ -1,0 +1,5 @@
+export const BASE_URL = 'http://10.128.50.136:3000';
+
+export const IS_AUTHENTICATED_KEY = 'KEY_GUARDIAN_IS_AUTHENTICATED';
+export const EMAIL_KEY = 'KEY_GUARDIAN_EMAIL';
+export const TOKEN_KEY = 'KEY_GUARDIAN_TOKEN';
