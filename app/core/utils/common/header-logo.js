@@ -19,7 +19,8 @@ import {
     Menu,
     MenuItem 
 } from 'react-native-material-menu';
-import { NavigationContainer } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import * as Constants from './constants';
 
 function LogoTitle() {
     return (
@@ -32,14 +33,14 @@ function LogoTitle() {
     );
 }
 
-const ProfPicMenuIcon = (route, navigation) => {
+const ProfPicMenuIcon = (route) => {
     const [visible, setVisible] = React.useState(false);
     const hideMenu = () => setVisible(false);
     const showMenu = () => setVisible(true);
-    const baseUrl = 'http://10.128.50.136:3000';
     // const { token } = route.params;
+    const navigation = useNavigation();
     const logout = async () => {
-        console.log('token - ' + JSON.stringify(route));
+        console.log('token - ' + route.params.token);
         try {
             const config = {
                 headers: {
@@ -47,7 +48,7 @@ const ProfPicMenuIcon = (route, navigation) => {
                 },
             };
             // console.log(`${baseUrl}/api/users/online/${email}`);
-            await axios.delete(baseUrl + '/api/users/online/cfj@abc.com', config)
+            await axios.delete(Constants.BASE_URL + '/api/users/online/cfj@abc.com', config)
                 .then(res => {
                     alert('logout successful: ' + res.data.msg);
                     navigation.navigate('LandingScreen');
@@ -97,20 +98,32 @@ const ProfPicMenuIcon = (route, navigation) => {
     );
 }
 
-function registerBtn() {
+function BtnRegister() {
     return (
         <View style={headerStyles.btnContainer}>
-            <FontAwesomeIcon icon={ faUserAlt }/>
+            <FontAwesomeIcon icon={ faUserAlt } styles={headerStyles.btnIcon}/>
             <Text>Register</Text>
         </View>
     );
 }
 
-function loginBtn() {
+function BtnLogin() {
     return (
         <View style={headerStyles.btnContainer}>
-            <FontAwesomeIcon icon={ faSignInAlt }/>
+            <FontAwesomeIcon icon={ faSignInAlt } styles={headerStyles.btnIcon}/>
             <Text>Login</Text>
+        </View>
+    );
+}
+
+function AuthHeader() {
+    return (
+        <View style={headerStyles.headerContainer}>
+            <LogoTitle/>
+            <View>
+                <BtnRegister/>
+                <BtnLogin/>
+            </View>
         </View>
     );
 }
@@ -130,6 +143,14 @@ const headerStyles = StyleSheet.create({
     },
     btnContainer: {
         flexDirection: 'row',
+        alignContent: 'center',
+        alignItems: 'center',
+    },
+    btnIcon: {
+        width: 32.0,
+        height: 32.0,
+        alignSelf: 'center',
+        color: '#fff',
     },
     profPicMenuIconContainer: {
         width: 44.0,
@@ -156,7 +177,19 @@ const headerStyles = StyleSheet.create({
         textAlign: 'center',
         alignSelf: 'center',
         color: '#fff',
-    }
+    },
+    headerContainer: {
+        width: "100%",
+        height: 56.0,
+        backgroundColor: '#174052',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingStart: 8.0,
+    },
 });
 
-export { LogoTitle, loginBtn, registerBtn, ProfPicMenuIcon };
+export { 
+    LogoTitle,
+    ProfPicMenuIcon, 
+    AuthHeader,
+};
