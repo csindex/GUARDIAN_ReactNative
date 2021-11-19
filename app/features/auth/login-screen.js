@@ -18,8 +18,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import * as Constants from './../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen() {
+    const navigation = useNavigation();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(false);

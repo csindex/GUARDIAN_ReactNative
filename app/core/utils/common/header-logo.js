@@ -21,6 +21,7 @@ import {
 } from 'react-native-material-menu';
 import { useNavigation } from '@react-navigation/native';
 import * as Constants from './constants';
+import { back } from 'react-native/Libraries/Animated/Easing';
 
 function LogoTitle() {
     return (
@@ -39,6 +40,10 @@ const ProfPicMenuIcon = (route) => {
     const showMenu = () => setVisible(true);
     // const { token } = route.params;
     const navigation = useNavigation();
+    async function saveKeys() {
+        await SecureStore.delete(Constants.TOKEN_KEY);
+        await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(false));
+    }
     const logout = async () => {
         console.log('token - ' + route.params.token);
         try {
@@ -50,8 +55,9 @@ const ProfPicMenuIcon = (route) => {
             // console.log(`${baseUrl}/api/users/online/${email}`);
             await axios.delete(Constants.BASE_URL + '/api/users/online/cfj@abc.com', config)
                 .then(res => {
+                    saveKeys();
                     alert('logout successful: ' + res.data.msg);
-                    navigation.navigate('LandingScreen');
+                    navigation.navigate('AuthWrapperScreen');
                 }).catch(err => console.log('error logout ' + err));
         } catch (error) {
             alert('oyy ?' + error);
@@ -100,29 +106,28 @@ const ProfPicMenuIcon = (route) => {
 
 function BtnRegister() {
     return (
-        <View style={headerStyles.btnContainer}>
-            <FontAwesomeIcon icon={ faUserAlt } styles={headerStyles.btnIcon}/>
-            <Text>Register</Text>
-        </View>
+        <TouchableOpacity>
+            <View style={headerStyles.btnContainer}>
+                <FontAwesomeIcon size={12.0} color={'white'} styles={headerStyles.btnIcon} icon={ faUserAlt }/>
+                <Text style={headerStyles.btnText}>  Register</Text>
+            </View>
+        </TouchableOpacity>
     );
 }
 
-function BtnLogin() {
+const AuthHeader = (props) => {
+    console.log('Screen ' + props.screen);
     return (
-        <View style={headerStyles.btnContainer}>
-            <FontAwesomeIcon icon={ faSignInAlt } styles={headerStyles.btnIcon}/>
-            <Text>Login</Text>
-        </View>
-    );
-}
-
-function AuthHeader() {
-    return (
-        <View style={headerStyles.headerContainer}>
+        <View style={[headerStyles.headerContainer, {backgroundColor: (props.screen === 'landing' ? '#17405299' : '#174052')}]}>
             <LogoTitle/>
-            <View>
+            <View style={headerStyles.btnContainer2}>
                 <BtnRegister/>
-                <BtnLogin/>
+                <TouchableOpacity onPress={() => props.handleSetScreen('login')}>
+                    <View style={headerStyles.btnContainer}>
+                        <FontAwesomeIcon color={'white'} icon={ faSignInAlt } styles={headerStyles.btnIcon}/>
+                        <Text style={headerStyles.btnText}>  Login</Text>
+                    </View>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -145,11 +150,21 @@ const headerStyles = StyleSheet.create({
         flexDirection: 'row',
         alignContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 16.0,
+        paddingVertical: 8.0,
+    },
+    btnContainer2: {
+        flexDirection: 'row',
+        alignContent: 'flex-end',
+        alignItems: 'flex-end',
+        justifyContent: 'space-between',
+        marginEnd: 8.0,
     },
     btnIcon: {
-        width: 32.0,
-        height: 32.0,
         alignSelf: 'center',
+        color: '#fff',
+    },
+    btnText: {
         color: '#fff',
     },
     profPicMenuIconContainer: {
@@ -181,10 +196,12 @@ const headerStyles = StyleSheet.create({
     headerContainer: {
         width: "100%",
         height: 56.0,
-        backgroundColor: '#174052',
+        backgroundColor: '#17405299',
         flexDirection: 'row',
         alignItems: 'center',
         paddingStart: 8.0,
+        justifyContent: 'space-between',
+        position: 'absolute',
     },
 });
 

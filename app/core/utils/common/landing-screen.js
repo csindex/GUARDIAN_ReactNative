@@ -15,7 +15,7 @@ import AppLoading from 'expo-app-loading';
 import * as SecureStore from 'expo-secure-store';
 import * as Constants from './constants';
 
-function LandingScreen({ navigation }) {
+const LandingScreen = (props) => {
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
@@ -25,33 +25,28 @@ function LandingScreen({ navigation }) {
         'Inter-SemiBold': require('./../../assets/fonts/Inter-SemiBold.otf'),
         'Inter-Thin': require('./../../assets/fonts/Inter-Thin.otf'),
     });
-    // const [isAuthenticated, setIsAuthenticated] = React.useState(false);
-    async function getIsAuthenticated() {
-        const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
-        const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
-        console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
-        if (JSON.parse(f)) {
-            console.log('return true');
-            // setIsAuthenticated(true);
-            navigation.navigate('PostScreen', {token: token});
-        }
-    }
-    React.useEffect(() => {
-        console.log('useEffect');
-        getIsAuthenticated();
-    }, []);
+    // async function getIsAuthenticated() {
+    //     const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
+    //     const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
+    //     console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
+    //     if (JSON.parse(f)) {
+    //         console.log('return true');
+    //         // setIsAuthenticated(true);
+    //         navigation.navigate('PostScreen', {token: token});
+    //     }
+    // }
+    // React.useEffect(() => {
+    //     console.log('useEffect');
+    //     getIsAuthenticated();
+    // }, []);
     if (!fontsLoaded) {
         return <AppLoading/>;
     } else {
         return (
-            <SafeAreaView style={styles.mainContainer}>
-                <StatusBar 
-                    barStyle='light-content'
-                    backgroundColor='#174052'
-                />
+            <View style={styles.mainContainer}>
                 <ImageBackground source={require('../../assets/common/bg-auth.png')} style={styles.landingScreenBgImage}>
                     <View style={styles.overlay}>
-                        <Text style={lsStyles.guardianLabel}>GUARDIAN</Text>
+                        <Text adjustsFontSizeToFit style={lsStyles.guardianLabel}>GUARDIAN</Text>
                         <Text style={lsStyles.emergencyLabel}>Emergency Response at your Fingertips</Text>
                         <Text style={lsStyles.gLabel}>Geographic Unified Assistanace and Response to Distress Incidents with Agile Networking</Text>
                         <View style={lsStyles.buttonContainer}>
@@ -65,7 +60,7 @@ function LandingScreen({ navigation }) {
                             <TouchableOpacity 
                                 style={lsStyles.loginBtn} 
                                 activeOpacity={0.6}
-                                onPress={() => navigation.navigate('LoginScreen')}
+                                onPress={() => props.handleSetScreen('login')}
                             >
                                 <Text style={lsStyles.loginBtnText}>Login</Text>
                             </TouchableOpacity>
@@ -77,7 +72,7 @@ function LandingScreen({ navigation }) {
                         </View>
                     </View>            
                 </ImageBackground>
-            </SafeAreaView>
+            </View>
         );
     }
 }
