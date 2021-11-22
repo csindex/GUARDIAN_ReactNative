@@ -12,11 +12,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import * as Constants from './../../core/utils/common/constants';
 import styles from './../../core/utils/styles';
-import { AuthHeader } from '../../core/utils/common/header-logo';
+import { AuthHeader } from '../../core/utils/common/header';
 import LandingScreen from '../../core/utils/common/landing-screen';
 import LoginScreen from '../../features/auth/login-screen';
 
-function AuthWrapper() {
+function AuthWrapper({navigation}) {
     const [screen, setScreen] = React.useState('landing');
     handleSetScreen = (screenStr) => {
         console.log(`${screen} x ${screenStr}`);
@@ -44,16 +44,36 @@ function AuthWrapper() {
     // React.useEffect(() => {
     //     handleSetScreen('landing');
     // }, []);
+    async function getIsAuthenticated() {
+        const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
+        const email = await SecureStore.getItemAsync(Constants.EMAIL_KEY);
+        const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
+        // console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
+        console.log('token - ' + token);
+        if (JSON.parse(f)) {
+            // console.log('return true');
+            // setIsAuthenticated(true);
+            navigation.navigate('PostScreen', {token: token, email: email});
+        }
+    }
+    React.useEffect(() => {
+        getIsAuthenticated();
+    }, []);
+    const os = Platform.OS;
+    // console.log('StatusBar height: ' + StatusBar.currentHeight);
     return (
         <View style={styles.mainContainer}>
             <SafeAreaView>
                 <StatusBar translucent
-                    barStyle={Platform.OS === 'ios' ? 'dark-content' : 'light-content'}
+                    barStyle='light-content'
                     backgroundColor='#174052'
                 />
             </SafeAreaView>
-            {(screen === 'landing' ? <LandingScreen handleSetScreen={this.handleSetScreen}/> : <LoginScreen/>)}
-            <AuthHeader handleSetScreen={this.handleSetScreen} screen={screen}/>
+            {(screen === 'landing' ? <LandingScreen handleSetScreen={this.handleSetScreen} os={os}/> : <LoginScreen/>)}
+            <View style={{position: 'absolute'}}>
+                <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
+                <AuthHeader handleSetScreen={this.handleSetScreen} screen={screen}/>
+            </View>
         </View>
     );
 }

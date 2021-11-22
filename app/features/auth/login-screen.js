@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as React from 'react';
 import { 
-    Alert,
+    Button,
     ImageBackground, 
     StatusBar, 
     StyleSheet, 
@@ -213,6 +213,8 @@ const lsStyles = StyleSheet.create({
     },
     loginBtnContainer: {
         marginTop: 8.0,
+        alignContent: 'center',
+        justifyContent: 'center',
     },
     loginBtnText: {
         width: 116.0,
@@ -223,12 +225,20 @@ const lsStyles = StyleSheet.create({
         textAlignVertical: 'center',
         textAlign: 'center',
         fontSize: 24.0,
+        fontFamily: 'Inter',
+        justifyContent: 'center',
+        ...Platform.select({
+            ios: {
+                lineHeight: 48.0, // as same as height
+            },
+            android: {}
+        })
     },
     emailInput: {
-        height: 36.0,
+        height: 48.0,
         borderWidth: 1,
         padding: 10,
-        borderRadius: 4.0,
+        borderRadius: 8.0,
         marginTop: 16.0,
         fontSize: 16.0,
     },
@@ -239,10 +249,10 @@ const lsStyles = StyleSheet.create({
     },
     passInput: {
         flex: 1, 
-        height: 36.0,
+        height: 48.0,
         borderWidth: 1,
         padding: 10,
-        borderRadius: 4.0,
+        borderRadius: 8.0,
         fontSize: 16.0,
     },
     eyeIcon: {

@@ -5,7 +5,9 @@ import {
     StyleSheet, 
     View,
     Text,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform,
+    Pressable
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { 
@@ -21,7 +23,7 @@ import {
 } from 'react-native-material-menu';
 import { useNavigation } from '@react-navigation/native';
 import * as Constants from './constants';
-import { back } from 'react-native/Libraries/Animated/Easing';
+import * as SecureStore from 'expo-secure-store';
 
 function LogoTitle() {
     return (
@@ -41,19 +43,21 @@ const ProfPicMenuIcon = (route) => {
     // const { token } = route.params;
     const navigation = useNavigation();
     async function saveKeys() {
-        await SecureStore.delete(Constants.TOKEN_KEY);
+        await SecureStore.deleteItemAsync(Constants.TOKEN_KEY);
         await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(false));
     }
+    console.log('token - ' + route.params.token + ' x ' + JSON.parse(route.params.token));
     const logout = async () => {
-        console.log('token - ' + route.params.token);
+        const token = JSON.parse(route.params.token);
+        const email = route.params.email;
         try {
             const config = {
                 headers: {
-                    'x-auth-token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjBiNGRiNmU1ZWRjOTIyMDg4YjAwNDJhIn0sImlhdCI6MTYzNjcwNzg4NH0.qjlOssnIzLOuIQmbVdZY1HzDqX3GjkNkBiIE2AXjkNU',
+                    'x-auth-token': token,
                 },
             };
-            // console.log(`${baseUrl}/api/users/online/${email}`);
-            await axios.delete(Constants.BASE_URL + '/api/users/online/cfj@abc.com', config)
+            console.log(`${Constants.BASE_URL}/api/users/online/${email} x\n${token}`);
+            await axios.delete(`${Constants.BASE_URL}/api/users/online/${email}`, config)
                 .then(res => {
                     saveKeys();
                     alert('logout successful: ' + res.data.msg);
@@ -116,10 +120,12 @@ function BtnRegister() {
 }
 
 const AuthHeader = (props) => {
-    console.log('Screen ' + props.screen);
+    // console.log('Screen ' + props.screen);
     return (
         <View style={[headerStyles.headerContainer, {backgroundColor: (props.screen === 'landing' ? '#17405299' : '#174052')}]}>
-            <LogoTitle/>
+            <Pressable onPress={() => props.handleSetScreen('landing')}>
+                <LogoTitle/>
+            </Pressable>
             <View style={headerStyles.btnContainer2}>
                 <BtnRegister/>
                 <TouchableOpacity onPress={() => props.handleSetScreen('login')}>
@@ -200,8 +206,16 @@ const headerStyles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         paddingStart: 8.0,
+        ...Platform.select({
+            ios: {
+                paddingEnd: '17%',
+            },
+            android: {
+                paddingEnd: '23%',
+            }
+        }),
         justifyContent: 'space-between',
-        position: 'absolute',
+        // position: 'absolute',
     },
 });
 

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Screens from './app/core/utils/common/screens';
-import * as Header from './app/core/utils/common/header-logo';
+import * as Header from './app/core/utils/common/header';
 // import FontAwesome, {
 //     SolidIcons,
 //     RegularIcons,

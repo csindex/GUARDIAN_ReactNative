@@ -42,11 +42,12 @@ const LandingScreen = (props) => {
     if (!fontsLoaded) {
         return <AppLoading/>;
     } else {
+        const isIOS = (props.os === 'ios');
         return (
             <View style={styles.mainContainer}>
                 <ImageBackground source={require('../../assets/common/bg-auth.png')} style={styles.landingScreenBgImage}>
                     <View style={styles.overlay}>
-                        <Text adjustsFontSizeToFit style={lsStyles.guardianLabel}>GUARDIAN</Text>
+                        <Text adjustsFontSizeToFit style={[lsStyles.guardianLabel, {fontSize: (isIOS ? 48.0 : 56.0), letterSpacing: (isIOS ? 4.0 : 8.0)}]}>GUARDIAN</Text>
                         <Text style={lsStyles.emergencyLabel}>Emergency Response at your Fingertips</Text>
                         <Text style={lsStyles.gLabel}>Geographic Unified Assistanace and Response to Distress Incidents with Agile Networking</Text>
                         <View style={lsStyles.buttonContainer}>
