@@ -7,7 +7,8 @@ import {
     Text,
     TouchableOpacity,
     Platform,
-    Pressable
+    Pressable,
+    StatusBar
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { 
@@ -36,20 +37,21 @@ function LogoTitle() {
     );
 }
 
-const ProfPicMenuIcon = (route) => {
+const ProfPicMenuIcon = (props) => {
     const [visible, setVisible] = React.useState(false);
     const hideMenu = () => setVisible(false);
     const showMenu = () => setVisible(true);
-    // const { token } = route.params;
     const navigation = useNavigation();
     async function saveKeys() {
         await SecureStore.deleteItemAsync(Constants.TOKEN_KEY);
         await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(false));
     }
-    console.log('token - ' + route.params.token + ' x ' + JSON.parse(route.params.token));
+    // console.log(`E x T - ${props.email} x ${JSON.parse(props.token)}`);
     const logout = async () => {
-        const token = JSON.parse(route.params.token);
-        const email = route.params.email;
+        // const token = JSON.parse(route.params.token);
+        // const email = route.params.email;
+        const token = JSON.parse(props.token);
+        const email = props.email;
         try {
             const config = {
                 headers: {
@@ -74,15 +76,15 @@ const ProfPicMenuIcon = (route) => {
                 visible={visible}
                 onRequestClose={hideMenu}
                 anchor={
-                    <TouchableOpacity
-                        activeOpacity={0.6}
-                        onPress={showMenu}
-                    >
+                    <Pressable onPress={() => {
+                        showMenu();
+                        console.log('pressed');
+                        }}>
                         <Image
                             style={headerStyles.profPic}
                             source={require('./../../assets/common/spotter.png')}
                         />
-                    </TouchableOpacity>
+                    </Pressable>
                 }
             >
                 <MenuItem>
@@ -139,6 +141,30 @@ const AuthHeader = (props) => {
     );
 }
 
+const DashboardHeader = (props) => {
+    // console.log(`email - ${props.email}`);
+    return (
+        <View style={{position: 'absolute'}}>
+            <View style={{...Platform.select({ios:{height: 20},android:{height: StatusBar.currentHeight}}), backgroundColor: '#174052'}}/>
+            <View style={[headerStyles.headerContainer, {backgroundColor: '#174052'}]}>
+                <Pressable onPress={() => props.handleSetScreen('')}>
+                    <LogoTitle/>
+                </Pressable>
+                <View style={[headerStyles.btnContainer2, {paddingEnd: '9.5%'}]}>
+                    <View style={{marginEnd: 16.0, textAlignVertical: 'center', alignContent: 'center', paddingBottom: 10.0}}>
+                        <Pressable onPress={() => {
+                            props.handleSetScreen('edit-profile');
+                        }}>
+                            <Text style={headerStyles.btnText}>Profile</Text>
+                        </Pressable>
+                    </View>
+                    <ProfPicMenuIcon token={props.token} email={props.email}/>
+                </View>
+            </View>
+        </View>
+    );
+}
+
 const headerStyles = StyleSheet.create({
     logoContainer: {
         width: 36.0,
@@ -172,6 +198,8 @@ const headerStyles = StyleSheet.create({
     },
     btnText: {
         color: '#fff',
+        textAlignVertical: 'center',
+        alignSelf: 'center',
     },
     profPicMenuIconContainer: {
         width: 44.0,
@@ -223,4 +251,5 @@ export {
     LogoTitle,
     ProfPicMenuIcon, 
     AuthHeader,
+    DashboardHeader
 };

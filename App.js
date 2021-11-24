@@ -29,8 +29,12 @@ function App() {
                 headerMode='screen'
             >
                 {/* <Stack.Screen name="LoginScreen" component={Screens.LoginScreen} options={{headerShown: false}}/> */}
-                <Stack.Screen name="AuthWrapperScreen" component={Screens.AuthWrapper} options={{headerShown: false}}/>
                 <Stack.Screen 
+                    name="AuthWrapperScreen" 
+                    component={Screens.AuthWrapper} 
+                    options={{headerShown: false}}
+                />
+                {/* <Stack.Screen 
                     name="PostScreen" 
                     component={Screens.PostScreen} 
                     options={
@@ -43,6 +47,11 @@ function App() {
                             headerTitle: () => null,
                         })
                     }
+                /> */}
+                <Stack.Screen 
+                    name="HomeScreen" 
+                    component={Screens.HomeScreen} 
+                    options={{headerShown: false}}
                 />
             </Stack.Navigator>
         </NavigationContainer>

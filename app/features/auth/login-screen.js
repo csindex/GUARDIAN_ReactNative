@@ -82,7 +82,7 @@ export default function LoginScreen() {
                     console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
                         saveKeys(JSON.stringify(response.data.token));
-                        navigation.navigate('PostScreen', {
+                        navigation.navigate('HomeScreen', {
                             token: response.data.token,
                         });
                     }
@@ -104,7 +104,7 @@ export default function LoginScreen() {
             // }
         } catch (error) {
             alert('oyy' + error);
-            setIsLoading(false);
+            // setIsLoading(false);
         }
     };
     const logout = async () => {

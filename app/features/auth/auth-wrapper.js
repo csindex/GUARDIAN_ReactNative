@@ -13,8 +13,10 @@ import * as SecureStore from 'expo-secure-store';
 import * as Constants from './../../core/utils/common/constants';
 import styles from './../../core/utils/styles';
 import { AuthHeader } from '../../core/utils/common/header';
-import LandingScreen from '../../core/utils/common/landing-screen';
-import LoginScreen from '../../features/auth/login-screen';
+import { 
+    LandingScreen,
+    LoginScreen,
+} from './../../core/utils/common/views';
 
 function AuthWrapper({navigation}) {
     const [screen, setScreen] = React.useState('landing');
@@ -53,7 +55,7 @@ function AuthWrapper({navigation}) {
         if (JSON.parse(f)) {
             // console.log('return true');
             // setIsAuthenticated(true);
-            navigation.navigate('PostScreen', {token: token, email: email});
+            navigation.navigate('HomeScreen', {token: token, email: email});
         }
     }
     React.useEffect(() => {
@@ -63,12 +65,10 @@ function AuthWrapper({navigation}) {
     // console.log('StatusBar height: ' + StatusBar.currentHeight);
     return (
         <View style={styles.mainContainer}>
-            <SafeAreaView>
-                <StatusBar translucent
-                    barStyle='light-content'
-                    backgroundColor='#174052'
-                />
-            </SafeAreaView>
+            <StatusBar translucent
+                barStyle='light-content'
+                backgroundColor='#174052'
+            />
             {(screen === 'landing' ? <LandingScreen handleSetScreen={this.handleSetScreen} os={os}/> : <LoginScreen/>)}
             <View style={{position: 'absolute'}}>
                 <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
