@@ -69,10 +69,10 @@ function AuthWrapper({navigation}) {
                 barStyle='light-content'
                 backgroundColor='#174052'
             />
-            {(screen === 'landing' ? <LandingScreen handleSetScreen={this.handleSetScreen} os={os}/> : <LoginScreen/>)}
+            {(screen === 'landing' ? <LandingScreen handleSetScreen={handleSetScreen} os={os}/> : <LoginScreen handleSetScreen={handleSetScreen}/>)}
             <View style={{position: 'absolute'}}>
                 <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
-                <AuthHeader handleSetScreen={this.handleSetScreen} screen={screen}/>
+                <AuthHeader handleSetScreen={handleSetScreen} screen={screen}/>
             </View>
         </View>
     );

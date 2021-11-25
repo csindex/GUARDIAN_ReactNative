@@ -20,7 +20,7 @@ import * as Constants from './../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 
-export default function LoginScreen() {
+const LoginScreen = (props) => {
     const navigation = useNavigation();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -76,18 +76,23 @@ export default function LoginScreen() {
                 },
             };
             const body = JSON.stringify({email, password});
-            console.log(config + ', ' + body);
+            console.log(body);
             /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
                 .then(response => {
                     console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
-                        saveKeys(JSON.stringify(response.data.token));
+                        const newToken = JSON.stringify(response.data.token);
+                        saveKeys(newToken);
+                        setPassword('');
+                        props.handleSetScreen('landing');
                         navigation.navigate('HomeScreen', {
-                            token: response.data.token,
+                            token: newToken,
+                            email: email
                         });
                     }
                 })
                 .catch(err => {
+                    console.log(`${err}`)
                     const errors = err.response.data.errors;
                     if (errors) {
                         errors.forEach(error => alert(error.msg));
@@ -278,3 +283,5 @@ const lsStyles = StyleSheet.create({
         color: '#215a75',
     },
 });
+
+export default LoginScreen;

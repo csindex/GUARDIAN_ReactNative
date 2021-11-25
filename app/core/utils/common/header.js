@@ -50,6 +50,7 @@ const ProfPicMenuIcon = (props) => {
     const logout = async () => {
         // const token = JSON.parse(route.params.token);
         // const email = route.params.email;
+        console.log(`${props.token} x ${JSON.parse(props.token)}`);
         const token = JSON.parse(props.token);
         const email = props.email;
         try {
