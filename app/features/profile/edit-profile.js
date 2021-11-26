@@ -20,14 +20,45 @@ import {
     faCamera,
     faAddressBook,
     faBuilding,
-    faDesktop
+    faDesktop,
 } from '@fortawesome/free-solid-svg-icons';
+import {
+    faTwitter,
+    faFacebook,
+    faYoutube,
+    faLinkedin,
+    faInstagram,
+} from '@fortawesome/free-brands-svg-icons'
 import * as ImagePicker from 'expo-image-picker';
 import { BottomSheet } from 'react-native-btr';
 import MapView from 'react-native-maps';
 import DatePicker from 'react-native-date-picker';
+import { LinearGradient } from 'expo-linear-gradient';
+import * as Location from 'expo-location';
 
 export default function EditProfile() {
+    const [location, setLocation] = React.useState(null);
+    const [region, setRegion] = React.useState({region: {
+        latitude: 10.3726123,
+        longitude: 123.9454986,
+    }});
+    const[isMapReady, setMapReady] = React.useState(false);
+    const map = React.useRef(null);
+    const handleMapReady = React.useCallback(() => {
+        setMapReady(true);
+    }, [map, setMapReady]);
+    React.useEffect(() => {
+        (async() => {
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                console.log('Permission not granted');
+                return;
+            }
+            let l = await Location.getCurrentPositionAsync({});
+            console.log(`Location - ${JSON.stringify(l)}`);
+            setLocation(l);
+        }) ();
+    }, []);
     const [visible, setVisible] = React.useState(false);
     const toggleBottomNavigationView = () => {
       //Toggling the visibility state of the bottom sheet
@@ -72,15 +103,15 @@ export default function EditProfile() {
     const togglePInfoVisibility = () => {
         setPInfoVisible(!pInfoVisible);
     }
-    const [oInfoVisible, setOInfoVisible] = React.useState(true);
+    const [oInfoVisible, setOInfoVisible] = React.useState(false);
     const toggleOInfoVisibility = () => {
         setOInfoVisible(!oInfoVisible);
     }
-    const [eInfoVisible, setEInfoVisible] = React.useState(true);
+    const [eInfoVisible, setEInfoVisible] = React.useState(false);
     const toggleEInfoVisibility = () => {
         setEInfoVisible(!eInfoVisible);
     }
-    const [sInfoVisible, setSInfoVisible] = React.useState(true);
+    const [sInfoVisible, setSInfoVisible] = React.useState(false);
     const toggleSInfoVisibility = () => {
         setSInfoVisible(!sInfoVisible);
     }
@@ -141,6 +172,28 @@ export default function EditProfile() {
     const handleSetRStatus = (rs) => {
         if (rStatus !== rs) {
             setRStatus(rs);
+        }
+    };
+    const [bTVisible, setBTVisible] = React.useState(false);
+    const toggleBTView = () => {
+      //Toggling the visibility state of the bottom sheet
+      setBTVisible(!bTVisible);
+    };
+    const [bloodType, setBType] = React.useState('Blood Type')
+    const handleSetBType = (bt) => {
+        if (bloodType !== bt) {
+            setBType(bt);
+        }
+    };
+    const [iVisible, setIVisible] = React.useState(false);
+    const toggleIView = () => {
+      //Toggling the visibility state of the bottom sheet
+      setIVisible(!iVisible);
+    };
+    const [insurance, setInsurance] = React.useState('Insured?')
+    const handleSetInsurance = (i) => {
+        if (insurance !== i) {
+            setInsurance(i);
         }
     };
     let [fontsLoaded] = useFonts({
@@ -206,7 +259,38 @@ export default function EditProfile() {
                         </Pressable>
                         {pInfoVisible && <View>
                             <View style={epStyles.mapContainer}>
-                                <MapView style={epStyles.map}/>
+                                <MapView 
+                                    style={epStyles.map}
+                                    initialRegion={{
+                                        latitude: location?.coords.latitude ?? 0.0,
+                                        longitude: location?.coords.longitude ?? 0.0,
+                                        latitudeDelta: 0.015 * 5,
+                                        longitudeDelta: 0.0121 * 5,
+                                    }}
+                                    region={{
+                                        latitude: location?.coords.latitude ?? 0.0,
+                                        longitude: location?.coords.longitude ?? 0.0,
+                                        latitudeDelta: 0.00025,
+                                        longitudeDelta: 0.0025,
+                                    }}
+                                    ref={map}
+                                    onMapReady={handleMapReady}
+                                    zoomControlEnabled={true}
+                                    mapPadding={{left: 24.0, ...Platform.select({
+                                        ios: {
+                                            right: 16.0,
+                                        },
+                                        android: {
+                                            right: 32.0,
+                                        }
+                                    })}}
+                                >
+                                    {location && <MapView.Marker
+                                        coordinate={location?.coords}
+                                        title="My Marker"
+                                        description="Some description"
+                                    />}
+                                </MapView>
                             </View>
                             <TextInput
                                 style={epStyles.formInput} 
@@ -288,6 +372,140 @@ export default function EditProfile() {
                             />
                             <Text style={epStyles.label}>Please use comma separated values (eg. Patient Care, EMS, EMT, CPR, Hazardous Materials, Trauma)</Text>
                         </View>}
+
+                        <Pressable onPress={toggleEInfoVisibility}>
+                            <View style={[epStyles.formBtnPrimary, {marginTop: (eInfoVisible ? 8.0 : 4.0),}]}>
+                                <FontAwesomeIcon 
+                                    style={epStyles.formBtnIcon}
+                                    icon={faBuilding}
+                                />
+                                <Text style={epStyles.formBtnText}>Emergency Information</Text>
+                            </View>
+                        </Pressable>
+                        {eInfoVisible && <View>
+                            <TextInput
+                                style={epStyles.formInput} 
+                                placeholder='* Contact Person'
+                            />
+                            <Text style={epStyles.label}>Name of your contact person, in case of emergency</Text>
+
+                            <TextInput
+                                style={epStyles.formInput} 
+                                placeholder='* Relationship'
+                            />
+                            <Text style={epStyles.label}>Your relationship to your contact person</Text>
+
+                            <TextInput
+                                style={epStyles.formInput} 
+                                placeholder='* Mobile number'
+                            />
+                            <Text style={epStyles.label}>Mobile number of your contact person</Text>
+
+                            <TextInput
+                                style={epStyles.formInput} 
+                                placeholder='* Address'
+                            />
+                            <Text style={epStyles.label}>Address of your contact person</Text>
+
+                            <Pressable onPress={toggleBTView}>
+                                <Text style={[epStyles.formInput, {color: (bloodType !== 'Blood Type') ? '#000': '#aaa'}]}>{bloodType}</Text>
+                            </Pressable>
+                            <Text style={epStyles.label}>Your blood type (optional)</Text>
+
+                            <Pressable onPress={toggleIView}>
+                                <Text style={[epStyles.formInput, {color: (insurance !== 'Insured?') ? '#000': '#aaa'}]}>{insurance}</Text>
+                            </Pressable>
+                            <Text style={epStyles.label}>Are you insured? (optional)</Text>
+                        </View>}
+
+                        <Pressable onPress={toggleSInfoVisibility}>
+                            <View style={[epStyles.formBtnPrimary, {marginTop: (sInfoVisible ? 8.0 : 4.0),}]}>
+                                <FontAwesomeIcon 
+                                    style={epStyles.formBtnIcon}
+                                    icon={faDesktop}
+                                />
+                                <Text style={epStyles.formBtnText}>Social Network Links</Text>
+                            </View>
+                        </Pressable>
+                        {sInfoVisible && <View>
+                            <View style={epStyles.socialMediaLinkContainer}>
+                                <FontAwesomeIcon
+                                    icon={faTwitter}
+                                    style={epStyles.sMIconTwitter}
+                                    size={36.0} 
+                                />
+                                <TextInput
+                                    style={epStyles.sMInput} 
+                                    placeholder='Twitter URL'
+                                />
+                            </View>
+
+                            <View style={epStyles.socialMediaLinkContainer}>
+                                <FontAwesomeIcon
+                                    icon={faFacebook}
+                                    style={epStyles.sMIconFacebook}
+                                    size={36.0} 
+                                />
+                                <TextInput
+                                    style={epStyles.sMInput} 
+                                    placeholder='Facebook URL'
+                                />
+                            </View>
+
+                            <View style={epStyles.socialMediaLinkContainer}>
+                                <FontAwesomeIcon
+                                    icon={faYoutube}
+                                    style={epStyles.sMIconYoutube}
+                                    size={36.0} 
+                                />
+                                <TextInput
+                                    style={epStyles.sMInput} 
+                                    placeholder='Youtube URL'
+                                />
+                            </View>
+
+                            <View style={epStyles.socialMediaLinkContainer}>
+                                <FontAwesomeIcon
+                                    icon={faLinkedin}
+                                    style={epStyles.sMIconLinkedIn}
+                                    size={36.0} 
+                                />
+                                <TextInput
+                                    style={epStyles.sMInput} 
+                                    placeholder='LinkedIn URL'
+                                />
+                            </View>
+
+                            <View style={epStyles.socialMediaLinkContainer}>
+                                <View style={epStyles.instagramIconContainer}>
+                                    <LinearGradient
+                                        colors={['#405de6', '#5851db', '#833ab4', '#c13584', '#e1306c', '#fd1d1d']}
+                                        start={{x: 0.0, y: 0.45}}
+                                        end={{x: 1.0, y: 1.0}}
+                                        style={epStyles.instagramIconLinearGradient}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faInstagram}
+                                            style={epStyles.sMIconInstagram}
+                                            size={32.0} 
+                                        />
+                                    </LinearGradient>
+                                </View>
+                                <TextInput
+                                    style={epStyles.sMInput} 
+                                    placeholder='Instagram URL'
+                                />
+                            </View>
+                        </View>}
+                    </View>
+
+                    <View style={epStyles.actionButtonsContainer}>
+                        <Pressable style={epStyles.actionBtnContainer}>
+                            <Text style={[epStyles.actionBtnText, {fontSize: 20.0}]}>Submit</Text>
+                        </Pressable>
+                        <Pressable style={[epStyles.actionBtnContainer, {marginStart: 8.0, backgroundColor: '#fff'}]}>
+                            <Text style={[epStyles.actionBtnText, {fontSize: 16.0, color: '#1f1f1f'}]}>Go Back</Text>
+                        </Pressable>
                     </View>
                 </View>
                 </ScrollView>
@@ -454,6 +672,96 @@ export default function EditProfile() {
                         </View>
                     </View>
                 </BottomSheet>
+                <BottomSheet
+                    visible={bTVisible}
+                    onBackButtonPress={toggleBTView}
+                    onBackdropPress={toggleBTView}
+                >
+                    <View style={epStyles.bottomNavigationView}>
+                        <Text style={epStyles.bottomSheetHeader}>Select blood type</Text>
+                        <View style={epStyles.bottomSheetDivider}/>
+                        <View style={epStyles.bottomSheetDualButtonContainer}>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('A');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn1}>A</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('B');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn2}>B</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('O');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn3}>O</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('AB');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn4}>AB</Text>
+                            </Pressable>
+                        </View>
+                        <View style={epStyles.bottomSheetDualButtonContainer}>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('A+');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn1}>A+</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('B+');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn2}>B+</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('O+');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn3}>O+</Text>
+                            </Pressable>
+                            <View style={epStyles.bottomSheetDualButtonDivider}/>
+                            <Pressable onPress={() => {
+                                toggleBTView();
+                                handleSetBType('AB+');
+                            }}>
+                                <Text style={epStyles.bottomSheetBtn4}>AB+</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </BottomSheet>
+                <BottomSheet
+                    visible={iVisible}
+                    onBackButtonPress={toggleIView}
+                    onBackdropPress={toggleIView}
+                >
+                    <View style={epStyles.bottomNavigationView}>
+                        <Text style={epStyles.bottomSheetHeader}>Do you have an insurance?</Text>
+                        <View style={epStyles.bottomSheetDivider}/>
+                        <Pressable onPress={() => {
+                                toggleIView();
+                                handleSetInsurance('Yes');
+                            }}>
+                            <Text style={epStyles.bottomSheetButtons}>Yes</Text>
+                        </Pressable>
+                        <Pressable onPress={() => {
+                                toggleIView();
+                                handleSetInsurance('No');
+                            }}>
+                            <Text style={epStyles.bottomSheetButtons}>No</Text>
+                        </Pressable>
+                    </View>
+                </BottomSheet>
 
             </SafeAreaView>
         );
@@ -587,6 +895,7 @@ const epStyles = StyleSheet.create({
     map: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height * 0.3,
+        display: 'flex',
     },
     formInput: {
         marginTop: 8.0,
@@ -652,5 +961,101 @@ const epStyles = StyleSheet.create({
         paddingVertical: 8.0,
         fontFamily: 'Inter',
         color: '#1f1f1f',
+    },
+    bottomSheetBtn1: {
+        width: Dimensions.get('window').width * 0.17,
+        paddingStart: 16.0,
+        paddingVertical: 8.0,
+        fontFamily: 'Inter',
+        color: '#1f1f1f',
+    },
+    bottomSheetBtn2: {
+        width: Dimensions.get('window').width * 0.17,
+        paddingStart: 16.0,
+        paddingVertical: 8.0,
+        fontFamily: 'Inter',
+        color: '#1f1f1f',
+    },
+    bottomSheetBtn3: {
+        width: Dimensions.get('window').width * 0.17,
+        paddingStart: 16.0,
+        paddingVertical: 8.0,
+        fontFamily: 'Inter',
+        color: '#1f1f1f',
+    },
+    bottomSheetBtn4: {
+        width: Dimensions.get('window').width * 0.17,
+        paddingStart: 16.0,
+        paddingVertical: 8.0,
+        fontFamily: 'Inter',
+        color: '#1f1f1f',
+    },
+    socialMediaLinkContainer: {
+        marginTop: 16.0,
+        flexDirection: 'row',
+        alignItems: 'center',
+        alignSelf: 'stretch',
+    },
+    sMInput: {
+        marginStart: 8.0,
+        paddingHorizontal: 12.0,
+        paddingVertical: 8.0,
+        borderColor: 'grey',
+        borderWidth: 1.0,
+        borderRadius: 4.0,
+        alignSelf: 'stretch',
+        alignItems: 'stretch',
+        alignContent: 'stretch',
+        fontFamily: 'Inter',
+        flex: 1,
+    },
+    sMIconTwitter: {
+        color: '#1da1f2',
+    },
+    sMIconFacebook: {
+        color: '#3b5998',
+    },
+    sMIconYoutube: {
+        color: '#c4302b',
+    },
+    sMIconLinkedIn: {
+        color: '#0072b1',
+    },
+    sMIconInstagram: {
+        color: '#fff',
+    },
+    instagramIconContainer: {
+        width: 36.0,
+        height: 36.0,
+        borderRadius: 16.0,
+    },
+    instagramIconLinearGradient: {
+        borderRadius: 10.0,
+        width: 36.0,
+        height: 36.0,
+        alignItems: 'center',
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    actionBtnText: {
+        fontFamily: 'Inter',
+        fontSize: 16.0,
+        color: '#fff',
+        textAlignVertical: 'center',
+        alignSelf: 'center',
+    },
+    actionBtnContainer: {
+        paddingHorizontal: 24.0,
+        paddingVertical: 8.0,
+        borderRadius: 4.0,
+        color: '#215a75',
+        backgroundColor: '#215a75',
+        alignContent: 'center',
+        justifyContent: 'center',
+    },
+    actionButtonsContainer: {
+        flexDirection: 'row',
+        alignContent: 'center',
+        marginTop: 16.0,
     },
 });

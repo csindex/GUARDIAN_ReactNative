@@ -27,6 +27,8 @@
     "expo-dev-client": "~0.6.3",
     "expo-font": "~10.0.3",
     "expo-image-picker": "~11.0.3",
+    "expo-linear-gradient": "~10.0.3",
+    "expo-location": "~13.0.4",
     "expo-secure-store": "~11.0.3",
     "expo-status-bar": "~1.1.0",
     "react": "17.0.1",
