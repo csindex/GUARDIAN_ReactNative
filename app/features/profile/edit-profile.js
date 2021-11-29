@@ -35,6 +35,7 @@ import MapView from 'react-native-maps';
 import DatePicker from 'react-native-date-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 export default function EditProfile() {
     const [location, setLocation] = React.useState(null);
@@ -215,7 +216,7 @@ export default function EditProfile() {
                 epStyles.mainBG
             ]}>
 
-                <ScrollView showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false}>
+                <ScrollView keyboardShouldPersistTaps='handled' showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} horizontal={false}>
                 <View>
                     <Text style={epStyles.header}>Update Your Profile</Text>
 
@@ -260,7 +261,7 @@ export default function EditProfile() {
                         {pInfoVisible && <View>
                             <View style={epStyles.mapContainer}>
                                 <MapView 
-                                    style={epStyles.map}
+                                    style={[epStyles.map, {marginTop: 8.0,}]}
                                     initialRegion={{
                                         latitude: location?.coords.latitude ?? 0.0,
                                         longitude: location?.coords.longitude ?? 0.0,
@@ -291,6 +292,52 @@ export default function EditProfile() {
                                         description="Some description"
                                     />}
                                 </MapView>
+                                <ScrollView keyboardShouldPersistTaps='handled' horizontal={true} style={[epStyles.googlePlacesAutocompleteInput, {alignSelf: 'flex-start'}]}>
+                                    <GooglePlacesAutocomplete
+                                        styles={{
+                                            container: {width: '100%',},
+                                            textInputContainer: {width: '100%',},
+                                            textInput: {width: '100%',},
+                                            alignSelf: 'stretch',
+                                            alignItems: 'stretch',
+                                            alignContent: 'stretch',
+                                            listView: {
+                                                paddingVertical: 0.0,
+                                                backgroundColor: '#000',
+                                            },
+                                        }}
+                                        placeholder='Search nearest landmark'
+                                        onPress={(data, details = null)=> {
+                                            console.log('autocomplete');
+                                            console.log(data, details);
+                                        }}
+                                        query={{
+                                            key: 'AIzaSyB5kr_zwaIKrEERf3SRKYhwzoDpFLZ4Zgw',
+                                            language: 'en',
+                                            components: 'country:ph'
+                                        }}
+                                        minLength={3}
+                                        onFail={(error) => {
+                                            console.log(`error x ${error}`);
+                                            console.error(error);
+                                        }}
+                                        fetchDetails={true}
+                                        textInputProps={{
+                                            style: {
+                                                width: 508.0,
+                                                height: 48.0,
+                                                borderRadius: 4.0,
+                                                borderColor: 'grey',
+                                                borderWidth: StyleSheet.hairlineWidth,
+                                                paddingHorizontal: 12.0,
+                                            }
+                                        }}
+                                        // currentLocation={true}
+                                        // currentLocationLabel='Current location'
+                                    />
+                                </ScrollView>
+                                {/* <ScrollView horizontal={false} style={{flex: 1, backgroundColor: '#215a75', height: 56.0, width: '100%'}}> */}
+                                {/* </ScrollView> */}
                             </View>
                             <TextInput
                                 style={epStyles.formInput} 
@@ -1057,5 +1104,16 @@ const epStyles = StyleSheet.create({
         flexDirection: 'row',
         alignContent: 'center',
         marginTop: 16.0,
+    },
+    googlePlacesAutocompleteInput: {
+        width: '100%',
+        position: 'absolute',
+        top: 8.0,
+        start: 8.0,
+        left: 8.0,
+        right: 8.0,
+        end: 8.0,
+        // bottom: 8.0,
+        // backgroundColor: '#000'
     },
 });
