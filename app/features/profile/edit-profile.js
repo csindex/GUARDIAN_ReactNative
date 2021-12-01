@@ -1,3 +1,4 @@
+import axios from 'axios';
 import * as React from 'react';
 import {
     View,
@@ -31,42 +32,54 @@ import {
 } from '@fortawesome/free-brands-svg-icons'
 import * as ImagePicker from 'expo-image-picker';
 import { BottomSheet } from 'react-native-btr';
-import MapView from 'react-native-maps';
+import MapView, { Marker } from 'react-native-maps';
 import DatePicker from 'react-native-date-picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import * as Constants from './../../core/utils/common/constants';
+import { format } from 'date-fns';
 
-export default function EditProfile() {
-    const [location, setLocation] = React.useState(null);
+export default function EditProfile(props) {
+    // console.log(`ep token - ${props.token} x ${props.profileObject.user.name}`);
+    const [location, setLocation] = React.useState(props.profileObject?.lat ? 
+        {coords: {latitude: props.profileObject.lat, longitude: props.profileObject.lng}} : null);
     const [region, setRegion] = React.useState({region: {
         latitude: 10.3726123,
         longitude: 123.9454986,
     }});
+    const [homeAddress, setHomeAddress] = React.useState(props.profileObject?.completeaddress ? 
+        props.profileObject.completeaddress : '');
     const[isMapReady, setMapReady] = React.useState(false);
     const map = React.useRef(null);
     const handleMapReady = React.useCallback(() => {
         setMapReady(true);
     }, [map, setMapReady]);
-    React.useEffect(() => {
-        (async() => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                console.log('Permission not granted');
-                return;
-            }
-            let l = await Location.getCurrentPositionAsync({});
-            console.log(`Location - ${JSON.stringify(l)}`);
-            setLocation(l);
-        }) ();
-    }, []);
+    if (!props.profileObject?.lat) {
+        React.useEffect(() => {
+            (async() => {
+                let { status } = await Location.requestForegroundPermissionsAsync();
+                if (status !== 'granted') {
+                    console.log('Permission not granted');
+                    return;
+                }
+                let l = await Location.getCurrentPositionAsync({});
+                console.log(`Location - ${JSON.stringify(l)}`);
+                setLocation(l);
+            }) ();
+        }, []);
+    }
+    const [city, setCity] = React.useState(props.profileObject?.city ? props.profileObject.city : '');
+    const [area, setArea] = React.useState(props.profileObject?.area ? props.profileObject.area : '');
+    const [state, setSState] = React.useState(props.profileObject?.state ? props.profileObject.state : '');
     const [visible, setVisible] = React.useState(false);
     const toggleBottomNavigationView = () => {
       //Toggling the visibility state of the bottom sheet
       setVisible(!visible);
     };
     // The path of the picked image
-    const [pickedImagePath, setPickedImagePath] = React.useState('');
+    const [pickedImagePath, setPickedImagePath] = React.useState(props.profileObject?.profilepic ? 
+        `${Constants.BASE_URL_IMG}/${props.profileObject.profilepic}` : '');
     // This function is triggered when the "Select an image" button pressed
     const openImagePicker = async () => {
         // Ask the user for the permission to access the media library 
@@ -143,7 +156,8 @@ export default function EditProfile() {
       //Toggling the visibility state of the bottom sheet
       setGVisible(!gVisible);
     };
-    const [gender, setGender] = React.useState('* Gender')
+    const [gender, setGender] = React.useState((props.profileObject?.gender) ? 
+    props.profileObject.gender: '* Gender')
     const handleSetGender = (g) => {
         // console.log(`handleSetGender ${gender} x ${g}`);
         if (gender !== g) {
@@ -155,21 +169,24 @@ export default function EditProfile() {
       //Toggling the visibility state of the bottom sheet
       setCSVisible(!cSVisible);
     };
-    const [cStatus, setCStatus] = React.useState('* Civil Status')
+    const [cStatus, setCStatus] = React.useState((props.profileObject?.civilstatus) ? 
+    props.profileObject.civilstatus : '* Civil Status')
     const handleSetCStatus = (cs) => {
         // console.log(`handleSetGender ${gender} x ${g}`);
         if (cStatus !== cs) {
             setCStatus(cs);
         }
     };
-    const [bDate, setBDate] = React.useState(new Date());
+    const [bDate, setBDate] = React.useState((props.profileObject?.birthday) ? 
+    new Date(props.profileObject.birthday) : new Date());
     const [bDateOpen, setBDateOpen] = React.useState(false);
     const [rSVisible, setRSVisible] = React.useState(false);
     const toggleRSView = () => {
       //Toggling the visibility state of the bottom sheet
       setRSVisible(!rSVisible);
     };
-    const [rStatus, setRStatus] = React.useState('* Responder Status')
+    const [rStatus, setRStatus] = React.useState((props.profileObject?.status) ? 
+    props.profileObject.status : '* Responder Status')
     const handleSetRStatus = (rs) => {
         if (rStatus !== rs) {
             setRStatus(rs);
@@ -197,6 +214,54 @@ export default function EditProfile() {
             setInsurance(i);
         }
     };
+    const [bio, setBio] = React.useState((props.profileObject?.bio) ? props.profileObject.bio : '');
+    const [org, setOrg] = React.useState((props.profileObject?.organization) ? props.profileObject.organization : '');
+    const [orgWebsite, setOrgWebsite] = React.useState((props.profileObject?.website) ? props.profileObject.website : '');
+    const [orgAddress, setOrgAddress] = React.useState((props.profileObject?.location) ? props.profileObject.location : '');
+    const [skills, setSkills] = React.useState((props.profileObject?.skills) ? props.profileObject.skills : []);
+    const submit = async () => {
+
+    };
+    const getAddress = async (lat, lng) => {
+        try {
+            // console.log('https://maps.googleapis.com/maps/api/geocode/json?latlng=' + 
+            // lat + ',' + lng + '&key=' + Constants.API_KEY);
+            await axios.get(
+                'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + 
+                lat + ',' + lng + '&key=' + Constants.API_KEY, null)
+                .then(response => {
+                    if (!(JSON.stringify(response.data).includes('error'))) {
+                        // console.log(response.data);
+                        var r = response.data.results;
+                        setHomeAddress(r[0].formatted_address);
+                        for (var i in r) {
+                            var x = r[i].address_components
+                            for (var c in x) {
+                                var y = JSON.stringify(x[c].types);
+                                // console.log(y, ['locality', 'political'].toString);
+                                if (y === JSON.stringify(['locality', 'political'])) {
+                                    setCity(x[c].long_name);
+                                }
+                                else if (y === JSON.stringify(['administrative_area_level_5', 'political'])) {
+                                    setArea(x[c].long_name);
+                                }
+                                else if (y === JSON.stringify(['administrative_area_level_2', 'political'])) {
+                                    setSState(x[c].long_name);
+                                }
+                                else {
+                                    // do nothing
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(err => {
+                    console.log(`${err}`)
+                });
+        } catch (error) {
+            alert('oyy' + error);
+        }
+    }
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../core/assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../core/assets/fonts/Inter-Regular.otf'),
@@ -229,10 +294,14 @@ export default function EditProfile() {
                             Update Information to make your profile stand out. * = required field.
                         </Text>
                     </View>
+                    {/* {console.log(`${Constants.BASE_URL_IMG}/${props.profileObject.profilepic}`)} */}
 
                     <View style={epStyles.imageContainer}>
                         <Image
-                            source={(pickedImagePath !== '' ? {uri: pickedImagePath} : require('./../../core/assets/common/spotter.png'))}
+                            source={(pickedImagePath !== '' ? {uri: pickedImagePath} : 
+                            // (props.profileObject?.profilepic !== '') ? 
+                            // {uri: `${Constants.BASE_URL_IMG}/${props.profileObject.profilepic}`} :
+                            require('./../../core/assets/common/spotter.png'))}
                             style={epStyles.image}
                         />
                         <View style={epStyles.cameraIconContainer}>
@@ -261,6 +330,12 @@ export default function EditProfile() {
                         {pInfoVisible && <View>
                             <View style={epStyles.mapContainer}>
                                 <MapView 
+                                    onPress={(event) => {
+                                        // console.log(event.nativeEvent.coordinate);
+                                        var c = event.nativeEvent.coordinate;
+                                        setLocation({coords: c})
+                                        getAddress(c.latitude, c.longitude);
+                                    }}
                                     style={[epStyles.map, {marginTop: 8.0,}]}
                                     initialRegion={{
                                         latitude: location?.coords.latitude ?? 0.0,
@@ -286,10 +361,11 @@ export default function EditProfile() {
                                         }
                                     })}}
                                 >
-                                    {location && <MapView.Marker
-                                        coordinate={location?.coords}
-                                        title="My Marker"
-                                        description="Some description"
+                                    {location && <Marker
+                                        draggable={true}
+                                        coordinate={location.coords}
+                                        title="Home Address"
+                                        description={homeAddress}
                                     />}
                                 </MapView>
                                 <ScrollView keyboardShouldPersistTaps='handled' horizontal={true} style={[epStyles.googlePlacesAutocompleteInput, {alignSelf: 'flex-start'}]}>
@@ -308,11 +384,18 @@ export default function EditProfile() {
                                         }}
                                         placeholder='Search nearest landmark'
                                         onPress={(data, details = null)=> {
-                                            console.log('autocomplete');
-                                            console.log(data, details);
+                                            console.log(details.formatted_address, data.description);
+                                            // console.log(JSON.stringify(data) + ' x ' + JSON.stringify(details));
+                                            const coor = details.geometry.location;
+                                            setLocation({coords: {
+                                                latitude: coor.lat,
+                                                longitude: coor.lng,
+                                            }});
+                                            setHomeAddress(details.formatted_address);
+                                            setSearchVal('');
                                         }}
                                         query={{
-                                            key: 'AIzaSyB5kr_zwaIKrEERf3SRKYhwzoDpFLZ4Zgw',
+                                            key: Constants.API_KEY,
                                             language: 'en',
                                             components: 'country:ph'
                                         }}
@@ -341,7 +424,9 @@ export default function EditProfile() {
                             </View>
                             <TextInput
                                 style={epStyles.formInput} 
-                                placeholder='Sample Address, Sample City, Sample, Sample'
+                                placeholder='* Home Address'
+                                editable={false}
+                                value={homeAddress}
                             />
                             <Text style={epStyles.label}>New Home Address</Text>
 
@@ -356,7 +441,7 @@ export default function EditProfile() {
                             <Text style={epStyles.label}>Choose your civil status</Text>
 
                             <Pressable onPress={() => {setBDateOpen(true)}}>
-                                <Text style={[epStyles.formInput, {color: (cStatus !== 'mm/dd/yyyy') ? '#000': '#aaa'}]}>{JSON.stringify(bDate)}</Text>
+                                <Text style={[epStyles.formInput, {color: (cStatus !== 'mm/dd/yyyy') ? '#000': '#aaa'}]}>{format(Date.parse(bDate), "MM/dd/yyyy")}</Text>
                             </Pressable>
                             <DatePicker
                                 modal
@@ -376,6 +461,7 @@ export default function EditProfile() {
                                 multiline
                                 style={[epStyles.formInput, {height: 120.0, textAlignVertical: 'top'}]} 
                                 placeholder='A short bio of yourself'
+                                value={bio}
                             />
                             <Text style={epStyles.label}>Tell us a little about yourself</Text>
                         </View>}
@@ -398,24 +484,28 @@ export default function EditProfile() {
                             <TextInput
                                 style={epStyles.formInput} 
                                 placeholder='Organization'
+                                value={org}
                             />
                             <Text style={epStyles.label}>Organization you are an affiliated/member</Text>
 
                             <TextInput
                                 style={epStyles.formInput} 
                                 placeholder='Website'
+                                value={orgWebsite}
                             />
                             <Text style={epStyles.label}>Organization website</Text>
 
                             <TextInput
                                 style={epStyles.formInput} 
                                 placeholder='Organization Address'
+                                value={orgAddress}
                             />
                             <Text style={epStyles.label}>City or Municipality where organization is located</Text>
 
                             <TextInput
                                 style={epStyles.formInput} 
                                 placeholder='* Skills'
+                                value={skills.join(',')}
                             />
                             <Text style={epStyles.label}>Please use comma separated values (eg. Patient Care, EMS, EMT, CPR, Hazardous Materials, Trauma)</Text>
                         </View>}
@@ -550,7 +640,12 @@ export default function EditProfile() {
                         <Pressable style={epStyles.actionBtnContainer}>
                             <Text style={[epStyles.actionBtnText, {fontSize: 20.0}]}>Submit</Text>
                         </Pressable>
-                        <Pressable style={[epStyles.actionBtnContainer, {marginStart: 8.0, backgroundColor: '#fff'}]}>
+                        <Pressable 
+                            onPress={() => {
+                                props.handleSetScreen('home');
+                            }}
+                            style={[epStyles.actionBtnContainer, {marginStart: 8.0, backgroundColor: '#fff'}]}
+                        >
                             <Text style={[epStyles.actionBtnText, {fontSize: 16.0, color: '#1f1f1f'}]}>Go Back</Text>
                         </Pressable>
                     </View>

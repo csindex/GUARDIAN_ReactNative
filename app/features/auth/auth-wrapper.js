@@ -3,8 +3,6 @@ import {
     StatusBar,
     View,
     StyleSheet,
-    TouchableOpacity,
-    Image,
     Platform,
     BackHandler
 } from 'react-native';
@@ -16,12 +14,14 @@ import { AuthHeader } from '../../core/utils/common/header';
 import { 
     LandingScreen,
     LoginScreen,
+    LoadingScreen
 } from './../../core/utils/common/views';
 
 function AuthWrapper({navigation}) {
+    const [isLoading, setIsLoading] = React.useState(false);
     const [screen, setScreen] = React.useState('landing');
     handleSetScreen = (screenStr) => {
-        console.log(`${screen} x ${screenStr}`);
+        // console.log(`${screen} x ${screenStr}`);
         if (screenStr !== screen) {
             setScreen(screenStr);
         }
@@ -43,9 +43,6 @@ function AuthWrapper({navigation}) {
         return () =>
         BackHandler.removeEventListener("hardwareBackPress", backAction);
     }, []);
-    // React.useEffect(() => {
-    //     handleSetScreen('landing');
-    // }, []);
     async function getIsAuthenticated() {
         const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
         const email = await SecureStore.getItemAsync(Constants.EMAIL_KEY);
@@ -62,18 +59,23 @@ function AuthWrapper({navigation}) {
         getIsAuthenticated();
     }, []);
     const os = Platform.OS;
-    // console.log('StatusBar height: ' + StatusBar.currentHeight);
+    handleLoading = (flag) => {
+        setIsLoading(flag);
+    }
     return (
         <View style={styles.mainContainer}>
             <StatusBar translucent
                 barStyle='light-content'
                 backgroundColor='#174052'
             />
-            {(screen === 'landing' ? <LandingScreen handleSetScreen={handleSetScreen} os={os}/> : <LoginScreen handleSetScreen={handleSetScreen}/>)}
-            <View style={{position: 'absolute'}}>
-                <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
-                <AuthHeader handleSetScreen={handleSetScreen} screen={screen}/>
-            </View>
+            {isLoading ? <LoadingScreen/> :
+            <View>
+                {(screen === 'landing' ? <LandingScreen handleSetScreen={handleSetScreen} os={os}/> : <LoginScreen handleSetScreen={handleSetScreen} handleLoading={handleLoading}/>)}
+                <View style={{position: 'absolute'}}>
+                    <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
+                    <AuthHeader handleSetScreen={handleSetScreen} screen={screen}/>
+                </View>
+            </View>}
         </View>
     );
 }

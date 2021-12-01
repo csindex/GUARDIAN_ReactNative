@@ -1,8 +1,6 @@
 import axios from 'axios';
 import * as React from 'react';
 import { 
-    Button,
-    ImageBackground, 
     StatusBar, 
     StyleSheet, 
     Text, 
@@ -69,6 +67,7 @@ const LoginScreen = (props) => {
         }
         setIsLoading(true);
         try {
+            props.handleLoading(true);
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
@@ -76,14 +75,15 @@ const LoginScreen = (props) => {
                 },
             };
             const body = JSON.stringify({email, password});
-            console.log(body);
+            // console.log(body);
             /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
                 .then(response => {
-                    console.log(response.data);
+                    // console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
                         const newToken = JSON.stringify(response.data.token);
                         saveKeys(newToken);
                         setPassword('');
+                        props.handleLoading(false);
                         props.handleSetScreen('landing');
                         navigation.navigate('HomeScreen', {
                             token: newToken,
@@ -92,10 +92,15 @@ const LoginScreen = (props) => {
                     }
                 })
                 .catch(err => {
+                    props.handleLoading(false);
                     console.log(`${err}`)
-                    const errors = err.response.data.errors;
-                    if (errors) {
-                        errors.forEach(error => alert(error.msg));
+                    try {
+                        const errors = err.response.data.errors;
+                        if (errors) {
+                            errors.forEach(error => alert(error.msg));
+                        }
+                    } catch (error) {
+                        console.log(error);
                     }
                 });
             // alert('aaa' + response.data);
@@ -108,6 +113,7 @@ const LoginScreen = (props) => {
             //     throw new Error("An error has occurred");
             // }
         } catch (error) {
+            props.handleLoading(false);
             alert('oyy' + error);
             // setIsLoading(false);
         }

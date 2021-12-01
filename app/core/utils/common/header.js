@@ -46,7 +46,7 @@ const ProfPicMenuIcon = (props) => {
         await SecureStore.deleteItemAsync(Constants.TOKEN_KEY);
         await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(false));
     }
-    // console.log(`E x T - ${props.email} x ${JSON.parse(props.token)}`);
+    console.log(`pic - ${props.profPicUrl}`);
     const logout = async () => {
         // const token = JSON.parse(route.params.token);
         // const email = route.params.email;
@@ -83,7 +83,9 @@ const ProfPicMenuIcon = (props) => {
                         }}>
                         <Image
                             style={headerStyles.profPic}
-                            source={require('./../../assets/common/spotter.png')}
+                            source={(props.profPicUrl !== '') ? 
+                            {uri: `${Constants.BASE_URL_IMG}/${props.profPicUrl}`} : 
+                            require('./../../assets/common/spotter.png')}
                         />
                     </Pressable>
                 }
@@ -148,7 +150,7 @@ const DashboardHeader = (props) => {
         <View style={{position: 'absolute'}}>
             <View style={{...Platform.select({ios:{height: 20},android:{height: StatusBar.currentHeight}}), backgroundColor: '#174052'}}/>
             <View style={[headerStyles.headerContainer, {backgroundColor: '#174052'}]}>
-                <Pressable onPress={() => props.handleSetScreen('')}>
+                <Pressable onPress={() => props.handleSetScreen('home')}>
                     <LogoTitle/>
                 </Pressable>
                 <View style={[headerStyles.btnContainer2, {paddingEnd: '9.5%'}]}>
@@ -159,7 +161,7 @@ const DashboardHeader = (props) => {
                             <Text style={headerStyles.btnText}>Profile</Text>
                         </Pressable>
                     </View>
-                    <ProfPicMenuIcon token={props.token} email={props.email}/>
+                    <ProfPicMenuIcon token={props.token} email={props.email} profPicUrl={props.profileObject?.profilepic}/>
                 </View>
             </View>
         </View>
@@ -213,6 +215,11 @@ const headerStyles = StyleSheet.create({
     profPic: {
         width: 40.0,
         height: 40.0,
+        resizeMode: 'cover',
+        borderRadius: 20.0,
+        overflow: 'hidden',
+        borderColor: '#ddd',
+        // borderWidth: 2.0,
     },
     menuItem: {
         flexDirection: 'row',
