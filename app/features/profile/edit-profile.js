@@ -33,7 +33,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { BottomSheet } from 'react-native-btr';
 import MapView, { Marker } from 'react-native-maps';
-import DatePicker from 'react-native-date-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
@@ -71,11 +71,13 @@ export default function EditProfile(props) {
     }
     const [city, setCity] = React.useState(props.profileObject?.city ? props.profileObject.city : '');
     const [area, setArea] = React.useState(props.profileObject?.area ? props.profileObject.area : '');
-    const [state, setSState] = React.useState(props.profileObject?.state ? props.profileObject.state : '');
+    const [sState, setSState] = React.useState(props.profileObject?.state ? props.profileObject.state : '');
+    const [userLat, setLat] = React.useState(props.profileObject?.lat ? props.profileObject.lat : 0.0);
+    const [userLng, setLng] = React.useState(props.profileObject?.lng ? props.profileObject.lng : 0.0);
     const [visible, setVisible] = React.useState(false);
     const toggleBottomNavigationView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setVisible(!visible);
+        //Toggling the visibility state of the bottom sheet
+        setVisible(!visible);
     };
     // The path of the picked image
     const [pickedImagePath, setPickedImagePath] = React.useState(props.profileObject?.profilepic ? 
@@ -153,49 +155,64 @@ export default function EditProfile(props) {
     // }, []);
     const [gVisible, setGVisible] = React.useState(false);
     const toggleGView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setGVisible(!gVisible);
+        //Toggling the visibility state of the bottom sheet
+        setGVisible(!gVisible);
     };
     const [gender, setGender] = React.useState((props.profileObject?.gender) ? 
-    props.profileObject.gender: '* Gender')
+    Constants.Gender[props.profileObject.gender]: '* Gender');
+    const [genderVal, setGenderVal] = React.useState((props.profileObject?.gender) ? 
+    props.profileObject.gender : '0');
     const handleSetGender = (g) => {
-        // console.log(`handleSetGender ${gender} x ${g}`);
-        if (gender !== g) {
-            setGender(g);
+        // console.log(`${genderVal} x ${Constants.Gender[genderVal]} x ${g}`);
+        if (genderVal !== g) {
+            setGender(Constants.Gender[g]);
+            setGenderVal(g);
         }
     };
     const [cSVisible, setCSVisible] = React.useState(false);
     const toggleCSView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setCSVisible(!cSVisible);
+        //Toggling the visibility state of the bottom sheet
+        setCSVisible(!cSVisible);
     };
     const [cStatus, setCStatus] = React.useState((props.profileObject?.civilstatus) ? 
-    props.profileObject.civilstatus : '* Civil Status')
+    Constants.CivilStatus[props.profileObject.civilstatus] : '* Civil Status');
+    const [cStatusVal, setCStatusVal] = React.useState((props.profileObject?.civilstatus) ? 
+    props.profileObject.civilstatus : '0');
     const handleSetCStatus = (cs) => {
         // console.log(`handleSetGender ${gender} x ${g}`);
-        if (cStatus !== cs) {
-            setCStatus(cs);
+        if (cStatusVal !== cs) {
+            setCStatus(Constants.CivilStatus[cs]);
+            setCStatusVal(cs);
         }
     };
     const [bDate, setBDate] = React.useState((props.profileObject?.birthday) ? 
     new Date(props.profileObject.birthday) : new Date());
     const [bDateOpen, setBDateOpen] = React.useState(false);
+    const [mode, setMode] = React.useState('date');
+    const onDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || bDate;
+        setBDateOpen(false);
+        setBDate(currentDate);
+    };
     const [rSVisible, setRSVisible] = React.useState(false);
     const toggleRSView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setRSVisible(!rSVisible);
+        //Toggling the visibility state of the bottom sheet
+        setRSVisible(!rSVisible);
     };
     const [rStatus, setRStatus] = React.useState((props.profileObject?.status) ? 
+    Constants.RStatus[props.profileObject.status] : '* Responder Status');
+    const [rStatusVal, setRStatusVal] = React.useState((props.profileObject?.status) ? 
     props.profileObject.status : '* Responder Status')
     const handleSetRStatus = (rs) => {
-        if (rStatus !== rs) {
-            setRStatus(rs);
+        if (rStatusVal !== rs) {
+            setRStatus(Constants.RStatus[rs]);
+            setRStatusVal(rs);
         }
     };
     const [bTVisible, setBTVisible] = React.useState(false);
     const toggleBTView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setBTVisible(!bTVisible);
+        //Toggling the visibility state of the bottom sheet
+        setBTVisible(!bTVisible);
     };
     const [bloodType, setBType] = React.useState('Blood Type')
     const handleSetBType = (bt) => {
@@ -205,8 +222,8 @@ export default function EditProfile(props) {
     };
     const [iVisible, setIVisible] = React.useState(false);
     const toggleIView = () => {
-      //Toggling the visibility state of the bottom sheet
-      setIVisible(!iVisible);
+        //Toggling the visibility state of the bottom sheet
+        setIVisible(!iVisible);
     };
     const [insurance, setInsurance] = React.useState('Insured?')
     const handleSetInsurance = (i) => {
@@ -440,10 +457,20 @@ export default function EditProfile(props) {
                             </Pressable>
                             <Text style={epStyles.label}>Choose your civil status</Text>
 
-                            <Pressable onPress={() => {setBDateOpen(true)}}>
+                            <Pressable onPress={() => {setBDateOpen(!bDateOpen)}}>
                                 <Text style={[epStyles.formInput, {color: (cStatus !== 'mm/dd/yyyy') ? '#000': '#aaa'}]}>{format(Date.parse(bDate), "MM/dd/yyyy")}</Text>
                             </Pressable>
-                            <DatePicker
+                            {bDateOpen && (
+                                <DateTimePicker
+                                    testID="dateTimePicker"
+                                    value={bDate}
+                                    mode={mode}
+                                    is24Hour={true}
+                                    display="default"
+                                    onChange={onDateChange}
+                                />
+                            )}
+                            {/* <DatePicker
                                 modal
                                 open={bDateOpen}
                                 date={bDate}
@@ -454,7 +481,7 @@ export default function EditProfile(props) {
                                 onCancel={() => {
                                     setBDateOpen(false);
                                 }}
-                            />
+                            /> */}
                             <Text style={epStyles.label}>Birthdate (mm/dd/yyyy)</Text>
 
                             <TextInput

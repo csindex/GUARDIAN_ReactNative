@@ -75,6 +75,7 @@ const LoginScreen = (props) => {
                 },
             };
             const body = JSON.stringify({email, password});
+            let mounted = true;
             // console.log(body);
             /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
                 .then(response => {
@@ -83,7 +84,9 @@ const LoginScreen = (props) => {
                         const newToken = JSON.stringify(response.data.token);
                         saveKeys(newToken);
                         setPassword('');
-                        props.handleLoading(false);
+                        if (mounted) {
+                            props.handleLoading(false);
+                        }
                         props.handleSetScreen('landing');
                         navigation.navigate('HomeScreen', {
                             token: newToken,
@@ -103,6 +106,7 @@ const LoginScreen = (props) => {
                         console.log(error);
                     }
                 });
+            return () => mounted = false;
             // alert('aaa' + response.data);
             // if (response.status === 201) {
             //     alert('You have created: ${JSON.stringify(response.data, getCircularReplacer())}');
