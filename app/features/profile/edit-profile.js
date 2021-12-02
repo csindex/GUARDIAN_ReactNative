@@ -279,6 +279,21 @@ export default function EditProfile(props) {
             alert('oyy' + error);
         }
     }
+    const [formData, setFormData] = React.useState({
+        gender : '',
+        civilstatus : '',
+        birthday : '',
+        completeaddress : '',
+        city : '',
+        area : '',
+        state : '',
+        lat : '',
+        lng : '',
+        profilepic : '',
+    });
+    onInputChange = (c) => {
+        setFormData({...formData, [c.target.name] : c.target.value});
+    }
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../core/assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../core/assets/fonts/Inter-Regular.otf'),
