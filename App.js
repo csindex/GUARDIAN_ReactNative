@@ -1,8 +1,8 @@
 import * as React from 'react';
+import { Dimensions, PixelRatio } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Screens from './app/core/utils/common/screens';
-import * as Header from './app/core/utils/common/header';
 // import FontAwesome, {
 //     SolidIcons,
 //     RegularIcons,
@@ -13,6 +13,11 @@ import * as Header from './app/core/utils/common/header';
 const Stack = createNativeStackNavigator();
 
 function App() {
+    console.log(Dimensions.get('screen').width);
+    console.log(Dimensions.get('window').width);
+    console.log(Dimensions.get('screen').height);
+    console.log(Dimensions.get('window').height);
+    console.log(PixelRatio.getPixelSizeForLayoutSize(Dimensions.get('screen').width));
     return (
         <NavigationContainer>
             <Stack.Navigator 

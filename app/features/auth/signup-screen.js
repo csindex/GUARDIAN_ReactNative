@@ -7,30 +7,47 @@ import {
     TouchableOpacity, 
     View,
     TextInput,
+    Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from './../../core/utils/styles';
+import styles from '../../core/utils/styles';
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import * as Constants from './../../core/utils/common/constants';
+import * as Constants from '../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { Snackbar } from 'react-native-paper';
 
-const LoginScreen = (props) => {
+const SignupScreen = (props) => {
     const navigation = useNavigation();
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
+    const [fName, setFName] = React.useState('');
+    const [lName, setLName] = React.useState('');
+    const [mobile, setMobile] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [cPassword, setCPassword] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(false);
     const [hasError, setErrorFlag] = React.useState(false);
     const [hidePassword, setHidePassword] = React.useState(true);
+    const onChangeFNameHandler = (f) => {
+        setFName(f);
+    };
+    const onChangeLNameHandler = (l) => {
+        setLName(l);
+    };
+    const onChangeMobileHandler = (m) => {
+        setMobile(m);
+    };
     const onChangeEmailHandler = (e) => {
         setEmail(e);
     };
     const onChangePasswordHandler = (p) => {
         setPassword(p);
+    };
+    const onChangeCPasswordHandler = (cp) => {
+        setCPassword(cp);
     };
     const onTogglePassword = (f) => {
         setHidePassword(f);
@@ -174,16 +191,37 @@ const LoginScreen = (props) => {
                 />
                 <View style={styles.mainContainerBG}>
                     <View style={styles.formContainer}>
-                        <Text style={lsStyles.mainLabel}>Sign In</Text>
+                        <Text style={lsStyles.mainLabel}>Register</Text>
                         <View style={lsStyles.iconLabelContainer}>
                             <FontAwesomeIcon
                                 style={lsStyles.icon} 
                                 icon={ faUserAlt }
                             />
-                            <Text style={lsStyles.label}>Sign into your Account</Text>
+                            <Text style={lsStyles.label}>Create Your Account</Text>
                         </View>
                         <TextInput 
-                            style={lsStyles.emailInput}
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeFNameHandler}
+                            value={fName}
+                            placeholder='First Name'
+                        />
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeLNameHandler}
+                            value={lName}
+                            placeholder='Last Name'
+                        />
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeMobileHandler}
+                            value={mobile}
+                            placeholder='Mobile Number'
+                        />
+                        <Text style={{fontSize: 16.0, color: '#1f1f1f', marginTop: 4.0, fontFamily: 'Inter'}}>
+                            This site uses your mobile number for authentication, sending alerts and other communication.
+                        </Text>
+                        <TextInput 
+                            style={lsStyles.normalInput}
                             onChangeText={onChangeEmailHandler}
                             value={email}
                             placeholder='Email Address'
@@ -202,18 +240,29 @@ const LoginScreen = (props) => {
                                 onPress={() => onTogglePassword(!hidePassword)}
                             />
                         </View>
+                        <View style={lsStyles.passInputContainer}>
+                            <TextInput 
+                                style={lsStyles.passInput}
+                                onChangeText={onChangeCPasswordHandler}
+                                value={cPassword}
+                                placeholder='Confirm Password'
+                                secureTextEntry={hidePassword}
+                            />
+                            <FontAwesomeIcon
+                                style={lsStyles.eyeIcon} 
+                                icon={hidePassword ? faEye : faEyeSlash}
+                                onPress={() => onTogglePassword(!hidePassword)}
+                            />
+                        </View>
                         <TouchableOpacity
                             style={lsStyles.loginBtnContainer}
                             activeOpacity={0.6}
-                            onPress={login}
+                            onPress={() => {Alert.alert('Sign Up!!!')}}
                         >
-                            <Text style={lsStyles.loginBtnText}>Log-in</Text>
+                            <Text style={lsStyles.loginBtnText}>Register</Text>
                         </TouchableOpacity>
-                        <Text style = {lsStyles.noAccount}>Don't have an account?
-                            <Text onPress={()=> handleSetScreen('signup')} style = {lsStyles.signupLabel}> Sign Up</Text>
-                        </Text>
-                        <Text style = {lsStyles.forgotPass}>Forgot Password?
-                            <Text onPress={()=> handleSetScreen('forgotpass')} style = {lsStyles.forgotLabel}> Forgot</Text>
+                        <Text style = {lsStyles.noAccount}>Already have an account?
+                            <Text onPress={()=> handleSetScreen('login')} style = {lsStyles.signupLabel}> Sign In</Text>
                         </Text>
                     </View>
                 </View>
@@ -270,12 +319,12 @@ const lsStyles = StyleSheet.create({
             android: {}
         })
     },
-    emailInput: {
+    normalInput: {
         height: 48.0,
         borderWidth: 1,
         padding: 10,
         borderRadius: 8.0,
-        marginTop: 16.0,
+        marginTop: 10.0,
         fontSize: 16.0,
     },
     passInputContainer: {
@@ -316,4 +365,4 @@ const lsStyles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default SignupScreen;

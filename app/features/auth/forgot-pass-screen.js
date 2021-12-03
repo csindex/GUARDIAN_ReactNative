@@ -7,19 +7,25 @@ import {
     TouchableOpacity, 
     View,
     TextInput,
+    Alert
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import styles from './../../core/utils/styles';
+import styles from '../../core/utils/styles';
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
-import * as Constants from './../../core/utils/common/constants';
+import { 
+    faUserAlt,
+    faEye, 
+    faEyeSlash 
+} from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
+import * as Constants from '../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
 import { Snackbar } from 'react-native-paper';
 
-const LoginScreen = (props) => {
+const ForgotPassScreen = (props) => {
     const navigation = useNavigation();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
@@ -174,13 +180,13 @@ const LoginScreen = (props) => {
                 />
                 <View style={styles.mainContainerBG}>
                     <View style={styles.formContainer}>
-                        <Text style={lsStyles.mainLabel}>Sign In</Text>
+                        <Text style={lsStyles.mainLabel}>Forgot Password</Text>
                         <View style={lsStyles.iconLabelContainer}>
                             <FontAwesomeIcon
                                 style={lsStyles.icon} 
-                                icon={ faUserAlt }
+                                icon={ faEnvelope }
                             />
-                            <Text style={lsStyles.label}>Sign into your Account</Text>
+                            <Text style={lsStyles.label}>Enter your email address, for verification</Text>
                         </View>
                         <TextInput 
                             style={lsStyles.emailInput}
@@ -188,7 +194,7 @@ const LoginScreen = (props) => {
                             value={email}
                             placeholder='Email Address'
                         />
-                        <View style={lsStyles.passInputContainer}>
+                        {/* <View style={lsStyles.passInputContainer}>
                             <TextInput 
                                 style={lsStyles.passInput}
                                 onChangeText={onChangePasswordHandler}
@@ -201,20 +207,20 @@ const LoginScreen = (props) => {
                                 icon={hidePassword ? faEye : faEyeSlash}
                                 onPress={() => onTogglePassword(!hidePassword)}
                             />
-                        </View>
+                        </View> */}
                         <TouchableOpacity
-                            style={lsStyles.loginBtnContainer}
+                            style={lsStyles.forgotPassBtnContainer}
                             activeOpacity={0.6}
-                            onPress={login}
+                            onPress={() => {Alert.alert('Send OTP!!!')}}
                         >
-                            <Text style={lsStyles.loginBtnText}>Log-in</Text>
+                            <Text style={lsStyles.forgotPassBtnText}>Send OTP</Text>
                         </TouchableOpacity>
                         <Text style = {lsStyles.noAccount}>Don't have an account?
                             <Text onPress={()=> handleSetScreen('signup')} style = {lsStyles.signupLabel}> Sign Up</Text>
                         </Text>
-                        <Text style = {lsStyles.forgotPass}>Forgot Password?
-                            <Text onPress={()=> handleSetScreen('forgotpass')} style = {lsStyles.forgotLabel}> Forgot</Text>
-                        </Text>
+                        {/* <Text style = {lsStyles.forgotPass}>Forgot Password?
+                            <Text onPress={()=> someAction()} style = {lsStyles.forgotLabel}> Forgot</Text>
+                        </Text> */}
                     </View>
                 </View>
                 <Snackbar
@@ -247,12 +253,12 @@ const lsStyles = StyleSheet.create({
         fontSize: 20.0,
         marginStart: 4.0,
     },
-    loginBtnContainer: {
+    forgotPassBtnContainer: {
         marginTop: 8.0,
         alignContent: 'center',
         justifyContent: 'center',
     },
-    loginBtnText: {
+    forgotPassBtnText: {
         width: 116.0,
         height: 48.0,
         borderRadius: 4.0,
@@ -296,7 +302,6 @@ const lsStyles = StyleSheet.create({
         alignSelf: 'center',
         position: 'absolute',
         right: 4.0,
-        // backgroundColor: '#1f1f1f'
     },
     noAccount: {
         marginTop: 16.0,
@@ -316,4 +321,4 @@ const lsStyles = StyleSheet.create({
     },
 });
 
-export default LoginScreen;
+export default ForgotPassScreen;
