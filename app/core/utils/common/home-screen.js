@@ -79,6 +79,13 @@ function HomeScreen({route, navigation}) {
     const onDismissSnackbar = () => {
         setSBVisible(false);
     }
+    handleLogout = (flag) => {
+        console.log('home logout ' + flag);
+        if (flag) {
+            setSBText('Logged out successfully');
+            setSBVisible(true);
+        }
+    }
     React.useEffect(() => {
 
     }, []);
@@ -103,7 +110,13 @@ function HomeScreen({route, navigation}) {
                 onDismiss={onDismissSnackbar}
                 duration={4500}
             >{sbText}</Snackbar>
-            <DashboardHeader token={token} email={email} handleSetScreen={handleSetScreen} profileObject={profileObj}/>
+            <DashboardHeader 
+                token={token} 
+                email={email} 
+                handleSetScreen={handleSetScreen} 
+                profileObject={profileObj}
+                handleLogout={handleLogout}
+            />
         </View>
     );
 }

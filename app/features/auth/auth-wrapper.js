@@ -6,7 +6,7 @@ import {
     Platform,
     BackHandler
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+// import { SafeAreaView } from 'react-native-safe-area-context';
 import * as SecureStore from 'expo-secure-store';
 import * as Constants from './../../core/utils/common/constants';
 import styles from './../../core/utils/styles';
@@ -14,10 +14,14 @@ import { AuthHeader } from '../../core/utils/common/header';
 import { 
     LandingScreen,
     LoginScreen,
-    LoadingScreen
+    LoadingScreen,
+    ForgotPassScreen,
+    SignupScreen,
 } from './../../core/utils/common/views';
+// import { Snackbar } from 'react-native-paper';
 
-function AuthWrapper({navigation}) {
+function AuthWrapper({route, navigation}) {
+    const isLogout = route.params?.isLogout;
     const [isLoading, setIsLoading] = React.useState(false);
     const [screen, setScreen] = React.useState('landing');
     handleSetScreen = (screenStr) => {
@@ -58,10 +62,42 @@ function AuthWrapper({navigation}) {
     React.useEffect(() => {
         getIsAuthenticated();
     }, []);
+    // React.useEffect(() => {
+    //     if (isLogout) {
+    //         console.log('logout auth' + isLogout);
+    //         setSBText('Logged out successfully');
+    //         setSBBGColor('green');
+    //         setSBVisible(true);
+    //     }
+    // }, []);
+    // const [sbVisible, setSBVisible] = React.useState(false);
+    // const [sbText, setSBText] = React.useState('Logged out successfully');
+    // const [sbBGColor, setSBBGColor] = React.useState('green');
+    // const onDismissSnackbar = () => {
+    //     setSBVisible(false);
+    // }
+    // console.log(`isLogout? ${isLogout}`);
+    // if(isLogout) {
+        // console.log('logout auth' + isLogout);
+        // setSBText('Logged out successfully');
+        // setSBBGColor('green');
+        // setSBVisible(true);
+        // React.useEffect(() => {
+        //     console.log('logout auth 2');
+        // }, []);
+    // }
     const os = Platform.OS;
     handleLoading = (flag) => {
         setIsLoading(flag);
     }
+    // if (isLogout) {
+    //     console.log('logout');
+    //     React.useEffect(() => {
+    //         setSBText('Logged out successfully');
+    //         setSBBGColor('green');
+    //         setSBVisible(true);
+    //     }, []);
+    // }
     return (
         <View style={styles.mainContainer}>
             <StatusBar translucent
@@ -70,12 +106,26 @@ function AuthWrapper({navigation}) {
             />
             {isLoading ? <LoadingScreen/> :
             <View>
-                {(screen === 'landing' ? <LandingScreen handleSetScreen={handleSetScreen} os={os}/> : <LoginScreen handleSetScreen={handleSetScreen} handleLoading={handleLoading}/>)}
+                {(
+                    screen === 'landing' ? 
+                        <LandingScreen handleSetScreen={handleSetScreen} isLogout={isLogout}/> : 
+                    screen === 'forgotpass' ?
+                        <ForgotPassScreen handleSetScreen={handleSetScreen} handleLoading={handleLoading}/> :
+                    screen === 'signup' ?
+                        <SignupScreen handleSetScreen={handleSetScreen} handleLoading={handleLoading}/> :
+                        <LoginScreen handleSetScreen={handleSetScreen} handleLoading={handleLoading}/>
+                )}
                 <View style={{position: 'absolute'}}>
                     <View style={{height: (os === 'ios' ? 20 : StatusBar.currentHeight), backgroundColor: '#174052'}}/>
                     <AuthHeader handleSetScreen={handleSetScreen} screen={screen}/>
                 </View>
             </View>}
+            {/* <Snackbar
+                visible={sbVisible}
+                style={{backgroundColor: sbBGColor}}
+                onDismiss={onDismissSnackbar}
+                duration={4500}
+            >{sbText}</Snackbar> */}
         </View>
     );
 }

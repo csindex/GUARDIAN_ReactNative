@@ -12,7 +12,7 @@ export default StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'rgba(0,0,0,0.7)',
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
@@ -26,6 +26,8 @@ export default StyleSheet.create({
         backgroundColor: '#dddddd',
         justifyContent: 'center',
         alignItems: 'center',
+        alignSelf: 'center',
+        paddingTop: 64.0,
     },
     formContainer: {
         width: '100%',

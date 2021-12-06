@@ -2,20 +2,54 @@ import React from "react";
 import { 
     Alert,
     ImageBackground, 
-    StatusBar, 
-    StyleSheet, 
+    StyleSheet,
     Text, 
     TouchableOpacity, 
     View 
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+// import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./../styles"
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
-import * as SecureStore from 'expo-secure-store';
-import * as Constants from './constants';
+import '@expo/match-media';
+// import { useMediaQuery } from "react-responsive";
+import {
+    widthPercentageToDP as wP,
+    heightPercentageToDP as hP,
+} from 'react-native-responsive-screen';
+import { Snackbar } from 'react-native-paper';
 
 const LandingScreen = (props) => {
+    // console.log('landing ' + props.isLogout);
+    // const isTabletOrMobileDevice = useMediaQuery({
+    //     query: "(max-device-width: 1224px)",
+    // });
+    // const isDeviceWidth295_359 = useMediaQuery({
+    //     query: "(min-device-width:295) and (max-device-width:359)",
+    // });
+    // const isDeviceWidth375_811 = useMediaQuery({
+    //     query: "(min-device-width:375) and (max-device-height:800)",
+    // });
+    // const isDeviceWidth360_374 = useMediaQuery({
+    //     query: "(min-device-width:360) and (max-device-width:374)",
+    // });
+    // if (isTabletOrMobileDevice) {
+    //     if (isDeviceWidth295_359) {
+    //         console.log('295_359');
+    //     } else if (isDeviceWidth360_374) {
+    //         console.log('360_374');
+    //     } else if (isDeviceWidth375_811) {
+    //         console.log('375_811');
+    //     } else {
+    //         console.log('else');
+    //     }
+    // }
+    const [sbVisible, setSBVisible] = React.useState(props.isLogout);
+    const [sbText, setSBText] = React.useState('Logged out successfully');
+    const [sbBGColor, setSBBGColor] = React.useState('green');
+    const onDismissSnackbar = () => {
+        setSBVisible(false);
+    }
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
@@ -25,36 +59,31 @@ const LandingScreen = (props) => {
         'Inter-SemiBold': require('./../../assets/fonts/Inter-SemiBold.otf'),
         'Inter-Thin': require('./../../assets/fonts/Inter-Thin.otf'),
     });
-    // async function getIsAuthenticated() {
-    //     const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
-    //     const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
-    //     console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
-    //     if (JSON.parse(f)) {
-    //         console.log('return true');
-    //         // setIsAuthenticated(true);
-    //         navigation.navigate('PostScreen', {token: token});
-    //     }
-    // }
-    // React.useEffect(() => {
-    //     console.log('useEffect');
-    //     getIsAuthenticated();
-    // }, []);
     if (!fontsLoaded) {
         return <AppLoading/>;
     } else {
-        const isIOS = (props.os === 'ios');
+        // const isIOS = (props.os === 'ios');
         return (
             <View style={styles.mainContainer}>
                 <ImageBackground source={require('../../assets/common/bg-auth.png')} style={styles.landingScreenBgImage}>
                     <View style={styles.overlay}>
-                        <Text adjustsFontSizeToFit style={[lsStyles.guardianLabel, {fontSize: (isIOS ? 48.0 : 56.0), letterSpacing: (isIOS ? 4.0 : 8.0)}]}>GUARDIAN</Text>
+                        <Text 
+                            adjustsFontSizeToFit 
+                            // style={[lsStyles.guardianLabel, {
+                            //     fontSize: (isDeviceWidth375_811) ? 40.0 : 56.0,
+                            //     // letterSpacing: (isDeviceWidth375_811) ? 4.0 : 8.0,
+                            // }]}
+                            style={lsStyles.guardianLabel}
+                        >
+                            GUARDIAN
+                        </Text>
                         <Text style={lsStyles.emergencyLabel}>Emergency Response at your Fingertips</Text>
                         <Text style={lsStyles.gLabel}>Geographic Unified Assistanace and Response to Distress Incidents with Agile Networking</Text>
                         <View style={lsStyles.buttonContainer}>
                             <TouchableOpacity 
                                 style={lsStyles.signupBtn} 
                                 activeOpacity={0.6}
-                                onPress={() => Alert.alert('Signup!!!')}
+                                onPress={() => handleSetScreen('signup')}
                             >
                                 <Text style={lsStyles.signupBtnText}>Sign-up</Text>
                             </TouchableOpacity>
@@ -66,12 +95,20 @@ const LandingScreen = (props) => {
                                 <Text style={lsStyles.loginBtnText}>Login</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={lsStyles.footerContainer}>
-                            <Text style={lsStyles.mLabel}>Computer Aided Dispatch and Civilian Reporting System</Text>
-                            <Text style={lsStyles.gLabel}>Developed by Sugbotek Inc, an affiliate of 7Core Communications, Inc.</Text>
-                            <Text style={lsStyles.gLabel}>© 2021 All Rights Reserved</Text>                    
-                        </View>
-                    </View>            
+                        {/* <Text style={lsStyles.mLabel}>Computer Aided Dispatch and Civilian</Text>
+                        <Text style={lsStyles.mLabel}>Reporting System</Text> */}
+                    </View>
+                    <View style={lsStyles.footerContainer}>
+                        
+                        <Text style={[lsStyles.gLabel, {paddingTop: 80.0}]}>Developed by Sugbotek Inc, an affiliate of 7Core Communications, Inc.</Text>
+                        <Text style={lsStyles.gLabel}>© 2021 All Rights Reserved</Text>                    
+                    </View>
+                    <Snackbar
+                        visible={sbVisible}
+                        style={{backgroundColor: sbBGColor}}
+                        onDismiss={onDismissSnackbar}
+                        duration={4500}
+                    >{sbText}</Snackbar>            
                 </ImageBackground>
             </View>
         );
@@ -80,29 +117,30 @@ const LandingScreen = (props) => {
 
 const lsStyles = StyleSheet.create({
     guardianLabel: {
-        fontSize: 56.0,
+        fontSize: hP('6%'),
         color: '#fff',
-        letterSpacing: 8.0,
+        letterSpacing: wP('1.3%'),
         fontFamily: 'Inter-SemiBold',
     },
     emergencyLabel: {
-        fontSize: 16.0,
+        fontSize: hP('1.9%'),
         color: '#fff',
         letterSpacing : 1.5,
         fontFamily: 'Inter-Light',
         textAlign: 'center',
     },
     gLabel: {
-        fontSize: 8.0,
+        fontSize: hP('1%'),
         color: '#fff',
-        letterSpacing: 1.5,
-        fontFamily: 'Inter-Thin',
+        letterSpacing: 1.7,
+        fontFamily: 'Inter-Light',
         textAlign: 'center',
     },
     buttonContainer: {
         marginTop: 8.0,
         flexDirection: 'row',
         justifyContent: 'space-between',
+        paddingVertical: 20.0,
     },
     signupBtn: {
         width: 144.0,
@@ -139,7 +177,9 @@ const lsStyles = StyleSheet.create({
         textAlign: 'center',
     },
     footerContainer: {
-        marginTop: 200.0,
+        position: 'absolute',
+        bottom: 36.0,
+        alignSelf: 'center',
     },
 });
 
