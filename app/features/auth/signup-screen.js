@@ -14,6 +14,7 @@ import styles from '../../core/utils/styles';
 import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+<<<<<<< HEAD
 import { 
     faUserAlt, 
     faEye, 
@@ -64,6 +65,60 @@ const SignupScreen = (props) => {
         // console.log(text, name, formData);
         setFormData({...formData, [name] : text});
     };
+=======
+import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
+import * as Constants from '../../core/utils/common/constants';
+import * as SecureStore from 'expo-secure-store';
+import { useNavigation } from '@react-navigation/native';
+import { Snackbar } from 'react-native-paper';
+
+const SignupScreen = (props) => {
+    const navigation = useNavigation();
+    const [fName, setFName] = React.useState('');
+    const [lName, setLName] = React.useState('');
+    const [mobile, setMobile] = React.useState('');
+    const [email, setEmail] = React.useState('');
+    const [password, setPassword] = React.useState('');
+    const [cPassword, setCPassword] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [hasError, setErrorFlag] = React.useState(false);
+    const [hidePassword, setHidePassword] = React.useState(true);
+    const onChangeFNameHandler = (f) => {
+        setFName(f);
+    };
+    const onChangeLNameHandler = (l) => {
+        setLName(l);
+    };
+    const onChangeMobileHandler = (m) => {
+        setMobile(m);
+    };
+    const onChangeEmailHandler = (e) => {
+        setEmail(e);
+    };
+    const onChangePasswordHandler = (p) => {
+        setPassword(p);
+    };
+    const onChangeCPasswordHandler = (cp) => {
+        setCPassword(cp);
+    };
+    const onTogglePassword = (f) => {
+        setHidePassword(f);
+    }
+    async function saveKeys(token) {
+        await SecureStore.setItemAsync(Constants.EMAIL_KEY, email);
+        await SecureStore.setItemAsync(Constants.TOKEN_KEY, token);
+        await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(true));
+    }
+    async function getEmail() {
+        const e = await SecureStore.getItemAsync(Constants.EMAIL_KEY);
+        if (e) {
+            setEmail(e);
+        }
+    }
+    React.useEffect(() => {
+        getEmail();
+    }, []);
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
     const getCircularReplacer = () => {
         const seen = new WeakSet();
         return (key, value) => {
@@ -76,6 +131,79 @@ const SignupScreen = (props) => {
         return value;
         };
     };
+<<<<<<< HEAD
+=======
+    const login = async () => {
+        if (email === '' || password === '') {
+            // alert("Email or Password is invalid");
+            setSBText('Email or Password is invalid');
+            setSBBGColor('red');
+            setSBVisible(true);
+            return;
+        } else if (password.length < 8) {
+            setSBText('Password is too short');
+            setSBBGColor('red');
+            setSBVisible(true);
+            return;
+        }
+        setIsLoading(true);
+        try {
+            props.handleLoading(true);
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json, text/plain, */*',
+                },
+            };
+            const body = JSON.stringify({email, password});
+            let mounted = true;
+            // console.log(body);
+            /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
+                .then(response => {
+                    // console.log(response.data);
+                    if (!(JSON.stringify(response.data).includes('error'))) {
+                        const newToken = JSON.stringify(response.data.token);
+                        saveKeys(newToken);
+                        if (mounted) {
+                            // setPassword('');
+                            props.handleLoading(false);
+                            // props.handleSetScreen('landing');
+                            navigation.navigate('HomeScreen', {
+                                token: newToken,
+                                email: email
+                            });
+                        }
+                    }
+                })
+                .catch(err => {
+                    props.handleLoading(false);
+                    console.log(`${err}`)
+                    try {
+                        const errors = err.response.data.errors;
+                        if (errors) {
+                            errors.forEach(error => alert(error.msg));
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                });
+            return () => mounted = false;
+            // alert('aaa' + response.data);
+            // if (response.status === 201) {
+            //     alert('You have created: ${JSON.stringify(response.data, getCircularReplacer())}');
+            //     setIsLoading(false);
+            //     setFullName('');
+            //     setEmail('');
+            // } else {
+            //     throw new Error("An error has occurred");
+            // }
+        } catch (error) {
+            props.handleLoading(false);
+            alert('oyy' + error);
+            // setIsLoading(false);
+        }
+    };
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
     const logout = async () => {
         try {
             const config = {
@@ -118,6 +246,7 @@ const SignupScreen = (props) => {
                     backgroundColor='#174052'
                 />
                 <View style={styles.mainContainerBG}>
+<<<<<<< HEAD
                     {isOTP ? 
                     <RegisterOTPForm
                         formData={formData}
@@ -140,6 +269,83 @@ const SignupScreen = (props) => {
                         handleSetIsOTP={handleSetIsOTP}
                         formData={formData}
                     />}
+=======
+                    <View style={styles.formContainer}>
+                        <Text style={lsStyles.mainLabel}>Register</Text>
+                        <View style={lsStyles.iconLabelContainer}>
+                            <FontAwesomeIcon
+                                style={lsStyles.icon} 
+                                icon={ faUserAlt }
+                            />
+                            <Text style={lsStyles.label}>Create Your Account</Text>
+                        </View>
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeFNameHandler}
+                            value={fName}
+                            placeholder='First Name'
+                        />
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeLNameHandler}
+                            value={lName}
+                            placeholder='Last Name'
+                        />
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeMobileHandler}
+                            value={mobile}
+                            placeholder='Mobile Number'
+                        />
+                        <Text style={{fontSize: 16.0, color: '#1f1f1f', marginTop: 4.0, fontFamily: 'Inter'}}>
+                            This site uses your mobile number for authentication, sending alerts and other communication.
+                        </Text>
+                        <TextInput 
+                            style={lsStyles.normalInput}
+                            onChangeText={onChangeEmailHandler}
+                            value={email}
+                            placeholder='Email Address'
+                        />
+                        <View style={lsStyles.passInputContainer}>
+                            <TextInput 
+                                style={lsStyles.passInput}
+                                onChangeText={onChangePasswordHandler}
+                                value={password}
+                                placeholder='Password'
+                                secureTextEntry={hidePassword}
+                            />
+                            <FontAwesomeIcon
+                                style={lsStyles.eyeIcon} 
+                                icon={hidePassword ? faEye : faEyeSlash}
+                                onPress={() => onTogglePassword(!hidePassword)}
+                            />
+                        </View>
+                        <View style={lsStyles.passInputContainer}>
+                            <TextInput 
+                                style={lsStyles.passInput}
+                                onChangeText={onChangeCPasswordHandler}
+                                value={cPassword}
+                                placeholder='Confirm Password'
+                                secureTextEntry={hidePassword}
+                            />
+                            <FontAwesomeIcon
+                                style={lsStyles.eyeIcon} 
+                                icon={hidePassword ? faEye : faEyeSlash}
+                                onPress={() => onTogglePassword(!hidePassword)}
+                            />
+                        </View>
+                        <TouchableOpacity
+                            style={lsStyles.loginBtnContainer}
+                            activeOpacity={0.6}
+                            onPress={() => {Alert.alert('Sign Up!!!')}}
+                        >
+                            <Text style={lsStyles.loginBtnText}>Register</Text>
+                        </TouchableOpacity>
+                        <Text style = {lsStyles.noAccount}>Already have an account?
+                            <Text onPress={()=> handleSetScreen('login')} style = {lsStyles.signupLabel}> Sign In</Text>
+                        </Text>
+                    </View>
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
                 </View>
                 <Snackbar
                     visible={sbVisible}
@@ -152,6 +358,7 @@ const SignupScreen = (props) => {
     }
 };
 
+<<<<<<< HEAD
 const RegisterForm = (props) => {
     const submit = async c => {
         c.preventDefault();
@@ -381,6 +588,8 @@ const RegisterOTPForm = (props) => {
     );
 };
 
+=======
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
 const lsStyles = StyleSheet.create({
     mainLabel: {
         fontSize: 36.0,
@@ -392,7 +601,10 @@ const lsStyles = StyleSheet.create({
         flexDirection: 'row',
         marginTop: 16.0,
         alignItems: 'center',
+<<<<<<< HEAD
         marginStart: 12.0
+=======
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
     },
     icon: {
         marginStart: 16.0,
@@ -419,7 +631,11 @@ const lsStyles = StyleSheet.create({
         justifyContent: 'center',
         ...Platform.select({
             ios: {
+<<<<<<< HEAD
                 lineHeight: 48.0, // same as height
+=======
+                lineHeight: 48.0, // as same as height
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
             },
             android: {}
         })
@@ -428,7 +644,11 @@ const lsStyles = StyleSheet.create({
         height: 48.0,
         borderWidth: 1,
         padding: 10,
+<<<<<<< HEAD
         borderRadius: 4.0,
+=======
+        borderRadius: 8.0,
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
         marginTop: 10.0,
         fontSize: 16.0,
     },
@@ -468,6 +688,7 @@ const lsStyles = StyleSheet.create({
         marginStart: 8.0,
         color: '#215a75',
     },
+<<<<<<< HEAD
     formInputNote: {
         fontSize: hP('1.7%'), 
         color: '#1f1f1f', 
@@ -507,6 +728,8 @@ const lsStyles = StyleSheet.create({
         fontFamily: 'Inter',
         justifyContent: 'center',
     },
+=======
+>>>>>>> 0626ad1a9d091c2dcf639a120fbc7a8455d85d6f
 });
 
 export default SignupScreen;
