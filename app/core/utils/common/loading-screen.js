@@ -23,7 +23,7 @@ const LoadingScreen = () => {
         return <AppLoading/>;
     } else {
         return (
-            <View style={[styles.mainContainer, {backgroundColor: '#215a75', justifyContent: 'center'}]}>
+            <View style={[styles.mainContainer, {backgroundColor: '#174052', justifyContent: 'center'}]}>
                 <Image 
                     style={{alignSelf: 'center', height: 200.0, width: 200.0}}
                     source={require('./../../assets/common/small-logo.png')}

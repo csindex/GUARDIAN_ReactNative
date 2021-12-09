@@ -33,12 +33,15 @@ import { useFonts } from '@expo-google-fonts/inter';
 import AppLoading from 'expo-app-loading';
 
 function LogoTitle() {
+    const navigation = useNavigation();
     return (
         <View style={headerStyles.logoContainer}>
+            <Pressable onPress={() => navigation.navigate('LandingScreen2', {})}>
             <Image
                 style={headerStyles.logo}
                 source={require('./../../assets/common/small-logo.png')}
             />
+            </Pressable>
         </View>
     );
 }
@@ -146,8 +149,41 @@ const ProfPicMenuIcon = (props) => {
 //     }
 // }
 
-const AuthHeader = (props) => {
+function HeaderBtns() {
+    const navigation = useNavigation();
     // console.log('Screen ' + props.screen);
+    let [fontsLoaded] = useFonts({
+        'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
+        'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
+        'Inter-Bold': require('./../../assets/fonts/Inter-Bold.otf'),
+        'Inter-Light': require('./../../assets/fonts/Inter-Light.otf'),
+        'Inter-Medium': require('./../../assets/fonts/Inter-Medium.otf'),
+        'Inter-SemiBold': require('./../../assets/fonts/Inter-SemiBold.otf'),
+        'Inter-Thin': require('./../../assets/fonts/Inter-Thin.otf'),
+    });
+    if (!fontsLoaded) {
+        return <AppLoading/>;
+    } else {
+        return (
+            <View style={[headerStyles.btnContainer2, {marginEnd: 0.0}]}>
+                <Pressable onPress={() => navigation.navigate('SignupScreen', {})}>
+                    <View style={headerStyles.btnContainer}>
+                        <FontAwesomeIcon size={12.0} color={'white'} styles={headerStyles.btnIcon} icon={ faUserAlt }/>
+                        <Text style={headerStyles.btnText}>  Register</Text>
+                    </View>
+                </Pressable>
+                <Pressable onPress={() => navigation.navigate('LoginScreen', {})}>
+                    <View style={headerStyles.btnContainer}>
+                        <FontAwesomeIcon color={'white'} icon={ faSignInAlt } styles={headerStyles.btnIcon}/>
+                        <Text style={headerStyles.btnText}>  Login</Text>
+                    </View>
+                </Pressable>
+            </View>
+        );
+    }
+}
+
+const AuthHeader = (props) => {
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
@@ -221,7 +257,12 @@ const headerStyles = StyleSheet.create({
         borderRadius: 4.0,
         justifyContent: 'center',
         alignItems: 'center',
-        marginLeft: 12.0,
+        // ...Platform.select({
+            // ios: {},
+            // android: {
+                marginLeft: 12.0,
+            // },
+        // }),
     },
     logo: {
         width: 32.0,
@@ -315,5 +356,6 @@ export {
     LogoTitle,
     ProfPicMenuIcon, 
     AuthHeader,
-    DashboardHeader
+    DashboardHeader,
+    HeaderBtns,
 };

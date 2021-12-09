@@ -3,6 +3,8 @@ import { Dimensions, PixelRatio } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Screens from './app/core/utils/common/screens';
+import * as Header from './app/core/utils/common/header';
+import { HeaderTitle } from 'react-navigation-stack';
 // import FontAwesome, {
 //     SolidIcons,
 //     RegularIcons,
@@ -21,16 +23,14 @@ function App() {
     return (
         <NavigationContainer>
             <Stack.Navigator 
-                initialRouteName='AuthWrapperScreen'
-                // screenOptions={{
-                //     headerStyle: {
-                //         backgroundColor: '#174052', //'rgba(23, 64, 82, 0.8)'
-                //     },
-                //     headerTintColor: '#fff',
-                //     headerTitle: (props) => <LogoTitle {...props} />,
-                //     headerBackVisible: false,
-                //     headerMode='screen'
-                // }}
+                initialRouteName='LandingScreen2'
+                screenOptions={{
+                    headerTransparent: true,
+                    headerLeft: () => <Header.LogoTitle/>,
+                    headerTitle: () => null,
+                    headerRight: () => <Header.HeaderBtns/>,
+                    title: null,
+                }}
                 headerMode='screen'
             >
                 {/* <Stack.Screen name="LoginScreen" component={Screens.LoginScreen} options={{headerShown: false}}/> */}
@@ -53,6 +53,65 @@ function App() {
                         })
                     }
                 /> */}
+                <Stack.Screen 
+                    name="LandingScreen2" 
+                    component={Screens.LandingScreen2}
+                    options={
+                        ({route}) => ({
+                            headerStyle: {
+                                backgroundColor: '#17405280'
+                            },
+                        })
+                    }
+                />
+                <Stack.Screen 
+                    name="LoginScreen" 
+                    component={Screens.LoginScreen}
+                    options={
+                        ({route}) => ({
+                            // headerTransparent: true,
+                            headerStyle: {
+                                backgroundColor: '#174052'
+                            },
+                            // headerLeft: () => <Header.LogoTitle/>,
+                            // headerTitle: () => null,
+                            // headerRight: () => <Header.HeaderBtns/>,
+                            // title: null,
+                        })
+                    }
+                />
+                <Stack.Screen 
+                    name="SignupScreen" 
+                    component={Screens.SignupScreen}
+                    options={
+                        ({route, navigation}) => ({
+                            // headerTransparent: true,
+                            headerStyle: {
+                                backgroundColor: '#174052'
+                            },
+                            // headerLeft: () => <Header.LogoTitle/>,
+                            // headerTitle: () => null,
+                            // headerRight: () => <Header.HeaderBtns/>,
+                            // title: null,
+                        })
+                    }
+                />
+                <Stack.Screen 
+                    name="SignupOtpScreen" 
+                    component={Screens.SignupOtpScreen}
+                    options={
+                        ({route}) => ({
+                            // headerTransparent: true,
+                            headerStyle: {
+                                backgroundColor: '#174052'
+                            },
+                            // headerLeft: () => <Header.LogoTitle/>,
+                            // headerTitle: () => null,
+                            // headerRight: () => <Header.HeaderBtns/>,
+                            // title: null,
+                        })
+                    }
+                />
                 <Stack.Screen 
                     name="HomeScreen" 
                     component={Screens.HomeScreen} 
