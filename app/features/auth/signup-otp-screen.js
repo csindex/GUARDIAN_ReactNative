@@ -54,7 +54,8 @@ function SignupOtpScreen({route, navigation}) {
     // console.log(msg, ' timer ', timer);
     React.useEffect(() => {
         hideHeader(true);
-        sendOTP(data.name, data.number, msg, otp, 'register');
+        const id = 1;
+        sendOTP(data.name, data.number, msg, otp, id);
     }, [otp]);
     const [formData, setFormData] = React.useState({
         sent_otp : '',
@@ -105,11 +106,11 @@ function SignupOtpScreen({route, navigation}) {
     // React.useEffect(() => {
     //     setIsOTP(false);
     // }, [isOTP]);
-    // async function saveKeys(token) {
-    //     await SecureStore.setItemAsync(Constants.EMAIL_KEY, email);
-    //     await SecureStore.setItemAsync(Constants.TOKEN_KEY, token);
-    //     await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(true));
-    // }
+    async function saveKeys(token) {
+        await SecureStore.setItemAsync(Constants.EMAIL_KEY, data.email);
+        await SecureStore.setItemAsync(Constants.TOKEN_KEY, token);
+        await SecureStore.setItemAsync(Constants.IS_AUTHENTICATED_KEY, JSON.stringify(true));
+    }
     const resendOtp = () => {
         setOTP(generate);
     };
@@ -125,7 +126,7 @@ function SignupOtpScreen({route, navigation}) {
             onMatch(data, sent_otp);
         }
     };
-    const sendOTP = async (name, number, msg, otp, user) => {
+    const sendOTP = async (name, number, msg, otp, id) => {
         try {
             const config = {
                 headers: {
@@ -133,8 +134,8 @@ function SignupOtpScreen({route, navigation}) {
                     'Accept': 'application/json, text/plain, */*',
                 },
             };
-            const body = JSON.stringify({number, name, msg, otp, user});
-            await axios.post(Constants.BASE_URL + '/api/sms/sendOtp', body, config)
+            const body = JSON.stringify({number, name, msg, otp, id});
+            await axios.post(Constants.BASE_URL + '/api/sms/sendOtpReg', body, config)
                 .then(response => {
                     console.log('Response ', response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
@@ -144,9 +145,10 @@ function SignupOtpScreen({route, navigation}) {
                     }
                 })
                 .catch(err => {
-                    console.log(`otp error ${err}`)
+                    console.log('otp error - ', err);
                     try {
                         const errors = err.response.data.errors;
+                        console.log(errors);
                         if (errors) {
                             errors.forEach(error => console.log(`try error ${error}`));
                         }
@@ -179,10 +181,11 @@ function SignupOtpScreen({route, navigation}) {
                     }
                 })
                 .catch(err => {
-                    console.log(`onMatch error ${err}`)
+                    console.log('onMatch error - ', err)
                     hideHeader(false);
                     try {
                         const errors = err.response.data.errors;
+                        console.log('onMatch error2 - ', errors)
                         if (errors) {
                             errors.forEach(error => setSBVisible({
                                 flag: true,
@@ -213,8 +216,14 @@ function SignupOtpScreen({route, navigation}) {
                 .then(response => {
                     console.log('Response ', response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
+                        const newToken = JSON.stringify(response.data.token);
+                        saveKeys(newToken);
                         console.log('OTP Success!');
                         hideHeader(false);
+                        navigation.navigate('HomeScreen', {
+                            token: newToken,
+                            email: email,
+                        });
                     }
                 })
                 .catch(err => {
@@ -223,7 +232,13 @@ function SignupOtpScreen({route, navigation}) {
                     try {
                         const errors = err.response.data.errors;
                         if (errors) {
-                            errors.forEach(error => console.log('try error ', error));
+                            errors.forEach(error => navigation.navigate('SignupScreen', {
+                                sb: JSON.stringify({
+                                    flag: true,
+                                    sbText: error.msg,
+                                    sbBGColor: 'red',
+                                }),
+                            }));
                         }
                     } catch (error) {
                         console.log(`catch error ${error}`);
@@ -259,6 +274,7 @@ function SignupOtpScreen({route, navigation}) {
                     <View style={styles.formContainer}>
                         <Text style={lsStyles.mainLabel}>Register</Text>
                         <Paragraph style={lsStyles.iconLabelContainer}>
+                            <Text style={{fontSize: 16.0, }}> </Text>
                             <FontAwesomeIcon
                                 style={lsStyles.icon} 
                                 icon={ faKey }
@@ -327,7 +343,7 @@ const lsStyles = StyleSheet.create({
         // marginStart: 12.0
     },
     icon: {
-        marginStart: 12.0,
+        // marginStart: 12.0,
     },
     label: {
         fontSize: 20.0,

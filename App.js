@@ -4,7 +4,6 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as Screens from './app/core/utils/common/screens';
 import * as Header from './app/core/utils/common/header';
-import { HeaderTitle } from 'react-navigation-stack';
 // import FontAwesome, {
 //     SolidIcons,
 //     RegularIcons,
@@ -23,7 +22,7 @@ function App() {
     return (
         <NavigationContainer>
             <Stack.Navigator 
-                initialRouteName='LandingScreen2'
+                initialRouteName='LandingScreen'
                 screenOptions={{
                     headerTransparent: true,
                     headerLeft: () => <Header.LogoTitle/>,
@@ -54,10 +53,10 @@ function App() {
                     }
                 /> */}
                 <Stack.Screen 
-                    name="LandingScreen2" 
-                    component={Screens.LandingScreen2}
+                    name="LandingScreen" 
+                    component={Screens.LandingScreen}
                     options={
-                        ({route}) => ({
+                        ({route, navigation}) => ({
                             headerStyle: {
                                 backgroundColor: '#17405280'
                             },
@@ -109,6 +108,17 @@ function App() {
                             // headerTitle: () => null,
                             // headerRight: () => <Header.HeaderBtns/>,
                             // title: null,
+                        })
+                    }
+                />
+                <Stack.Screen 
+                    name="ForgotPassScreen" 
+                    component={Screens.ForgotPassScreen}
+                    options={
+                        ({route}) => ({
+                            headerStyle: {
+                                backgroundColor: '#174052'
+                            },
                         })
                     }
                 />

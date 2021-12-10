@@ -8,26 +8,58 @@ import {
     View,
     StatusBar
 } from "react-native";
-// import { SafeAreaView } from "react-native-safe-area-context";
 import styles from "./../styles"
 import { useFonts } from '@expo-google-fonts/inter';
-import AppLoading from 'expo-app-loading';
 import '@expo/match-media';
-// import { useMediaQuery } from "react-responsive";
 import {
     widthPercentageToDP as wP,
     heightPercentageToDP as hP,
 } from 'react-native-responsive-screen';
 import { Snackbar } from 'react-native-paper';
 import LoadingScreen from './loading-screen';
+import * as SecureStore from 'expo-secure-store';
+import * as Constants from '../common/constants';
 
-function LandingScreen2({navigation}) {
-    const [sbVisible, setSBVisible] = React.useState(false);
-    const [sbText, setSBText] = React.useState('Logged out successfully');
-    const [sbBGColor, setSBBGColor] = React.useState('green');
+function LandingScreen2({route, navigation}) {
+    const sb = route.params?.sb;
+    console.log(sb);
+    const [snackbar, setSBVisible] = React.useState({
+        flag: false,
+        sbText: '',
+        sbBGColor: 'green',
+    });
     const onDismissSnackbar = () => {
-        setSBVisible(false);
+        setSBVisible({
+            flag: false,
+            sbText: '',
+            sbBGColor: 'green',
+        });
     }
+    React.useEffect(() => {
+        if (sb) {
+            const newSb = JSON.parse(sb);
+            setSBVisible({
+                flag: newSb.flag,
+                sbText: newSb.sbText,
+                sbBGColor: newSb.sbBGColor,
+            });
+        }
+    }, [route]);
+    async function getIsAuthenticated() {
+        const token = await SecureStore.getItemAsync(Constants.TOKEN_KEY);
+        const email = await SecureStore.getItemAsync(Constants.EMAIL_KEY);
+        const f = await SecureStore.getItemAsync(Constants.IS_AUTHENTICATED_KEY);
+        // console.log('getIsAuthenticated-' + f + '-' + JSON.parse(f));
+        console.log('token - ' + token);
+        if (JSON.parse(f)) {
+            // console.log('return true');
+            // setIsAuthenticated(true);
+            navigation.navigate('HomeScreen', {token: token, email: email});
+        }
+    }
+    React.useEffect(() => {
+        getIsAuthenticated();
+    }, []);
     let [fontsLoaded] = useFonts({
         'Inter-Black': require('./../../assets/fonts/Inter-Black.otf'),
         'Inter': require('./../../assets/fonts/Inter-Regular.otf'),
@@ -86,11 +118,11 @@ function LandingScreen2({navigation}) {
                         <Text style={lsStyles.gLabel}>© 2021 All Rights Reserved</Text>                    
                     </View>
                     <Snackbar
-                        visible={sbVisible}
-                        style={{backgroundColor: sbBGColor}}
+                        visible={snackbar.flag}
+                        style={{backgroundColor: snackbar.sbBGColor}}
                         onDismiss={onDismissSnackbar}
-                        duration={4500}
-                    >{sbText}</Snackbar>            
+                        duration={1500}
+                    >{snackbar.sbText}</Snackbar>            
                 </ImageBackground>
             </View>
         );

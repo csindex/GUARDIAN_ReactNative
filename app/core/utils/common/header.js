@@ -36,7 +36,7 @@ function LogoTitle() {
     const navigation = useNavigation();
     return (
         <View style={headerStyles.logoContainer}>
-            <Pressable onPress={() => navigation.navigate('LandingScreen2', {})}>
+            <Pressable onPress={() => navigation.navigate('LandingScreen', {})}>
             <Image
                 style={headerStyles.logo}
                 source={require('./../../assets/common/small-logo.png')}
@@ -74,8 +74,12 @@ const ProfPicMenuIcon = (props) => {
                     saveKeys();
                     // alert('logout successful: ' + res.data.msg);
                     props.handleLogout(true);
-                    navigation.navigate('AuthWrapperScreen', {
-                        isLogout : true,
+                    navigation.navigate('LandingScreen', {
+                        sb: JSON.stringify({
+                            flag: true,
+                            sbText: 'Logged out successfully',
+                            sbBGColor: 'green',
+                        }),
                     });
                 }).catch(err => console.log('error logout ' + err));
         } catch (error) {

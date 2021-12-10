@@ -35,10 +35,10 @@ function HomeScreen({route, navigation}) {
             // console.log(config);
             await axios.get(Constants.BASE_URL + '/api/auth', config)
                 .then(response => {
-                    console.log(`auth get - ${response.data}`);
+                    console.log('auth get - ', response.data);
                 })
                 .catch(err => {
-                    console.log(`${err}`)
+                    console.log(err);
                     const errors = err.response.data.errors;
                     if (errors) {
                         errors.forEach(error => alert(error.msg));
@@ -56,14 +56,14 @@ function HomeScreen({route, navigation}) {
                 },
             };
             // const body = JSON.stringify({email, password});
-            // console.log(config);
+            console.log(config);
             await axios.get(Constants.BASE_URL + '/api/profile/me', config)
                 .then(response => {
-                    console.log(`profile get - ${JSON.stringify(response.data)}`);
+                    console.log('profile get - ', JSON.stringify(response.data));
                     setProfileObject(response.data);
                 })
                 .catch(err => {
-                    console.log(`${err}`)
+                    console.log(err.response.data);
                     const errors = err.response.data.errors;
                     if (errors) {
                         errors.forEach(error => alert(error.msg));
@@ -86,9 +86,6 @@ function HomeScreen({route, navigation}) {
             setSBVisible(true);
         }
     }
-    React.useEffect(() => {
-
-    }, []);
     return (
         <View style={styles.mainContainer}>
             <StatusBar 

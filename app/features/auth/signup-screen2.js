@@ -7,6 +7,7 @@ import {
     TouchableOpacity, 
     View,
     TextInput,
+    ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from '../../core/utils/styles';
@@ -29,8 +30,8 @@ import {
     heightPercentageToDP as hP,
 } from 'react-native-responsive-screen';
 
-function SignupScreen({navigation}) {
-    console.log('Signup');
+function SignupScreen({route, navigation}) {
+    const sb = route.params?.sb;
     const [hidePassword, setHidePassword] = React.useState(true);
     const onTogglePassword = (f) => {
         setHidePassword(f);
@@ -52,13 +53,33 @@ function SignupScreen({navigation}) {
         sbText: '',
         sbBGColor: 'green',
     });
+    // console.log(snackbar, route.params.snackbar);
+    React.useEffect(() => {
+        if (sb) {
+            // console.log(JSON.parse(sb), snackbar);
+            const newSb = JSON.parse(sb);
+            setSBVisible({
+                flag: newSb.flag,
+                sbText: newSb.sbText,
+                sbBGColor: newSb.sbBGColor,
+            });
+        }
+    }, [route]);
     const onDismissSnackbar = () => {
-        setSBVisible(false);
+        setSBVisible({
+            flag: false,
+            sbText: '',
+            sbBGColor: 'green',
+        });
     }
     const validateEmail = (email) => {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
     };
+    const validatePhone = (number) => {
+        var re = /^(09)\d{9}$/;
+        return re.test(number);
+    }
     const submit = () => {
         if (name === '' || lname === '' || number === '' || 
             email === '' || password === '') {
@@ -81,16 +102,24 @@ function SignupScreen({navigation}) {
                     sbBGColor: 'red',
                 });
             } else {
-                if (validateEmail(email)) {
-                    navigation.navigate('SignupOtpScreen', {
-                        data: formData,
-                    })
+                if (validatePhone(number)) {
+                    if (validateEmail(email)) {
+                        navigation.navigate('SignupOtpScreen', {
+                            data: formData,
+                        })
+                    } else {
+                        setSBVisible({
+                            flag: true,
+                            sbText: 'Please provide a valid email address',
+                            sbBGColor: 'red',
+                        }); 
+                    }
                 } else {
                     setSBVisible({
                         flag: true,
-                        sbText: 'Invalid email',
+                        sbText: 'Please provide a valid Philippines mobile number starting with \"09\"',
                         sbBGColor: 'red',
-                    }); 
+                    });
                 }
             }
         }
@@ -114,106 +143,109 @@ function SignupScreen({navigation}) {
                     barStyle='light-content'
                     backgroundColor='#174052'
                 />
-                <View style={styles.mainContainerBG}>
-                    <View style={styles.formContainer}>
-                        <Text style={lsStyles.mainLabel}>Register</Text>
-                        <View style={lsStyles.iconLabelContainer}>
-                            <FontAwesomeIcon
-                                style={lsStyles.icon} 
-                                icon={ faUserAlt }
+                <ScrollView>
+                    <View style={styles.mainContainerBG}>
+                        <View style={styles.formContainer}>
+                            <Text style={lsStyles.mainLabel}>Register</Text>
+                            <View style={lsStyles.iconLabelContainer}>
+                                <FontAwesomeIcon
+                                    style={lsStyles.icon} 
+                                    icon={ faUserAlt }
+                                />
+                                <Text style={lsStyles.label}>Create Your Account</Text>
+                            </View>
+                            <TextInput
+                                style={lsStyles.normalInput}
+                                value={name}
+                                name='name'
+                                placeholder='First Name'
+                                onChangeText={t => onChange(t, 'name')}
                             />
-                            <Text style={lsStyles.label}>Create Your Account</Text>
-                        </View>
-                        <TextInput
-                            style={lsStyles.normalInput}
-                            value={name}
-                            name='name'
-                            placeholder='First Name'
-                            onChangeText={t => onChange(t, 'name')}
-                        />
-                        <TextInput 
-                            style={lsStyles.normalInput}
-                            // onChangeText={onChangeLNameHandler}
-                            value={lname}
-                            name='lname'
-                            onChangeText={t => onChange(t, 'lname')}
-                            placeholder='Last Name'
-                        />
-                        <TextInput 
-                            style={lsStyles.normalInput}
-                            // onChangeText={onChangeMobileHandler}
-                            value={number}
-                            keyboardType='phone-pad'
-                            name='number'
-                            onChangeText={t => onChange(t, 'number')}
-                            placeholder='Mobile Number'
-                        />
-                        <Text style={lsStyles.formInputNote}>
-                            This site uses your mobile number for authentication, sending alerts and other communication.
-                        </Text>
-                        <TextInput 
-                            style={lsStyles.normalInput}
-                            // onChangeText={onChangeEmailHandler}
-                            value={email}
-                            name='email'
-                            onChangeText={t => onChange(t, 'email')}
-                            keyboardType='email-address'
-                            placeholder='Email Address'
-                        />
-                        <View style={lsStyles.passInputContainer}>
                             <TextInput 
-                                style={lsStyles.passInput}
-                                // onChangeText={onChangePasswordHandler}
-                                value={password}
-                                onChangeText={t => onChange(t, 'password')}
-                                placeholder='Password'
-                                secureTextEntry={hidePassword}
+                                style={lsStyles.normalInput}
+                                // onChangeText={onChangeLNameHandler}
+                                value={lname}
+                                name='lname'
+                                onChangeText={t => onChange(t, 'lname')}
+                                placeholder='Last Name'
                             />
-                            <View style={lsStyles.eyeIconContainer}>
-                                <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
-                                    <FontAwesomeIcon
-                                        style={lsStyles.eyeIcon} 
-                                        icon={hidePassword ? faEye : faEyeSlash}
-                                    />
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={lsStyles.passInputContainer}>
                             <TextInput 
-                                style={lsStyles.passInput}
-                                // onChangeText={onChangeCPasswordHandler}
-                                value={password2}
-                                name='password2'
-                                onChangeText={t => onChange(t, 'password2')}
-                                placeholder='Confirm Password'
-                                secureTextEntry={hidePassword}
+                                style={lsStyles.normalInput}
+                                // onChangeText={onChangeMobileHandler}
+                                value={number}
+                                keyboardType='phone-pad'
+                                name='number'
+                                onChangeText={t => onChange(t, 'number')}
+                                placeholder='Mobile Number'
+                                maxLength={11}
                             />
-                            <View style={lsStyles.eyeIconContainer}>
-                                <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
-                                    <FontAwesomeIcon
-                                        style={lsStyles.eyeIcon} 
-                                        icon={hidePassword ? faEye : faEyeSlash}
-                                    />
-                                </TouchableOpacity>
+                            <Text style={lsStyles.formInputNote}>
+                                This site uses your mobile number for authentication, sending alerts and other communication.
+                            </Text>
+                            <TextInput 
+                                style={lsStyles.normalInput}
+                                // onChangeText={onChangeEmailHandler}
+                                value={email}
+                                name='email'
+                                onChangeText={t => onChange(t, 'email')}
+                                keyboardType='email-address'
+                                placeholder='Email Address'
+                            />
+                            <View style={lsStyles.passInputContainer}>
+                                <TextInput 
+                                    style={lsStyles.passInput}
+                                    // onChangeText={onChangePasswordHandler}
+                                    value={password}
+                                    onChangeText={t => onChange(t, 'password')}
+                                    placeholder='Password'
+                                    secureTextEntry={hidePassword}
+                                />
+                                <View style={lsStyles.eyeIconContainer}>
+                                    <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
+                                        <FontAwesomeIcon
+                                            style={lsStyles.eyeIcon} 
+                                            icon={hidePassword ? faEye : faEyeSlash}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
+                            <View style={lsStyles.passInputContainer}>
+                                <TextInput 
+                                    style={lsStyles.passInput}
+                                    // onChangeText={onChangeCPasswordHandler}
+                                    value={password2}
+                                    name='password2'
+                                    onChangeText={t => onChange(t, 'password2')}
+                                    placeholder='Confirm Password'
+                                    secureTextEntry={hidePassword}
+                                />
+                                <View style={lsStyles.eyeIconContainer}>
+                                    <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
+                                        <FontAwesomeIcon
+                                            style={lsStyles.eyeIcon} 
+                                            icon={hidePassword ? faEye : faEyeSlash}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            <TouchableOpacity
+                                style={{alignSelf:'baseline'}}
+                                activeOpacity={0.6}
+                                onPress={submit}
+                            >
+                                <View style={lsStyles.loginBtnContainer}>
+                                        <Text style={lsStyles.loginBtnText}>Register</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <Text style={lsStyles.noAccount}>Already have an account?
+                                <Text 
+                                    style={lsStyles.signupLabel}
+                                    onPress={() => navigation.navigate('LoginScreen', {})} 
+                                > Sign In</Text>
+                            </Text>
                         </View>
-                        <TouchableOpacity
-                            style={{alignSelf:'baseline'}}
-                            activeOpacity={0.6}
-                            onPress={submit}
-                        >
-                            <View style={lsStyles.loginBtnContainer}>
-                                    <Text style={lsStyles.loginBtnText}>Register</Text>
-                            </View>
-                        </TouchableOpacity>
-                        <Text style={lsStyles.noAccount}>Already have an account?
-                            <Text 
-                                style={lsStyles.signupLabel}
-                                onPress={() => navigation.navigate('LoginScreen', {})} 
-                            > Sign In</Text>
-                        </Text>
                     </View>
-                </View>
+                </ScrollView>
                 <Snackbar
                     visible={snackbar.flag}
                     style={{backgroundColor: snackbar.sbBGColor}}

@@ -7,6 +7,8 @@ import {
     TouchableOpacity, 
     View,
     TextInput,
+    ScrollView,
+    KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './../../core/utils/styles';
@@ -172,51 +174,55 @@ function LoginScreen() {
                     barStyle='light-content'
                     backgroundColor='#174052'
                 />
-                <View style={styles.mainContainerBG}>
-                    <View style={styles.formContainer}>
-                        <Text style={lsStyles.mainLabel}>Sign In</Text>
-                        <View style={lsStyles.iconLabelContainer}>
-                            <FontAwesomeIcon
-                                style={lsStyles.icon} 
-                                icon={ faUserAlt }
-                            />
-                            <Text style={lsStyles.label}>Sign into your Account</Text>
-                        </View>
-                        <TextInput 
-                            style={lsStyles.emailInput}
-                            onChangeText={onChangeEmailHandler}
-                            value={email}
-                            placeholder='Email Address'
-                        />
-                        <View style={lsStyles.passInputContainer}>
+                <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
+                    <View style={styles.mainContainerBG}>
+                        <View style={styles.formContainer}>
+                            <Text style={lsStyles.mainLabel}>Sign In</Text>
+                            <View style={lsStyles.iconLabelContainer}>
+                                <FontAwesomeIcon
+                                    style={lsStyles.icon} 
+                                    icon={ faUserAlt }
+                                />
+                                <Text style={lsStyles.label}>Sign into your Account</Text>
+                            </View>
                             <TextInput 
-                                style={lsStyles.passInput}
-                                onChangeText={onChangePasswordHandler}
-                                value={password}
-                                placeholder='Password'
-                                secureTextEntry={hidePassword}
+                                style={lsStyles.emailInput}
+                                onChangeText={onChangeEmailHandler}
+                                value={email}
+                                placeholder='Email Address'
                             />
-                            <FontAwesomeIcon
-                                style={lsStyles.eyeIcon} 
-                                icon={hidePassword ? faEye : faEyeSlash}
-                                onPress={() => onTogglePassword(!hidePassword)}
-                            />
+                            <View style={lsStyles.passInputContainer}>
+                                <TextInput 
+                                    style={lsStyles.passInput}
+                                    onChangeText={onChangePasswordHandler}
+                                    value={password}
+                                    placeholder='Password'
+                                    secureTextEntry={hidePassword}
+                                />
+                                <FontAwesomeIcon
+                                    style={lsStyles.eyeIcon} 
+                                    icon={hidePassword ? faEye : faEyeSlash}
+                                    onPress={() => onTogglePassword(!hidePassword)}
+                                />
+                            </View>
+                            <TouchableOpacity
+                                style={{alignSelf:'baseline'}}
+                                activeOpacity={0.6}
+                                onPress={login}
+                            >
+                                <View style={styles.mainBtnContainer}>
+                                    <Text style={styles.mainBtnText}>Log-in</Text>
+                                </View>
+                            </TouchableOpacity>
+                            <Text style = {styles.textBtnLabel1}>Don't have an account?
+                                <Text onPress={()=> navigation.navigate('SignupScreen', {})} style = {styles.textBtnLabel}> Sign Up</Text>
+                            </Text>
+                            <Text style = {styles.textBtnLabel1}>Forgot Password?
+                                <Text onPress={()=> navigation.navigate('ForgotPassScreen', {})} style = {styles.textBtnLabel}> Forgot</Text>
+                            </Text>
                         </View>
-                        <TouchableOpacity
-                            style={lsStyles.loginBtnContainer}
-                            activeOpacity={0.6}
-                            onPress={login}
-                        >
-                            <Text style={lsStyles.loginBtnText}>Log-in</Text>
-                        </TouchableOpacity>
-                        <Text style = {lsStyles.noAccount}>Don't have an account?
-                            <Text onPress={()=> handleSetScreen('signup')} style = {lsStyles.signupLabel}> Sign Up</Text>
-                        </Text>
-                        <Text style = {lsStyles.forgotPass}>Forgot Password?
-                            <Text onPress={()=> handleSetScreen('forgotpass')} style = {lsStyles.forgotLabel}> Forgot</Text>
-                        </Text>
                     </View>
-                </View>
+                </KeyboardAvoidingView>
                 <Snackbar
                     visible={sbVisible}
                     style={{backgroundColor: sbBGColor}}
@@ -297,22 +303,6 @@ const lsStyles = StyleSheet.create({
         position: 'absolute',
         right: 4.0,
         // backgroundColor: '#1f1f1f'
-    },
-    noAccount: {
-        marginTop: 16.0,
-        fontSize: 20.0,
-    },
-    signupLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
-    },
-    forgotPass: {
-        marginTop: 8.0,
-        fontSize: 20.0,
-    },
-    forgotLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
     },
 });
 
