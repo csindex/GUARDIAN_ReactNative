@@ -22,6 +22,7 @@ import { faEnvelope } from '@fortawesome/free-regular-svg-icons';
 import * as Constants from '../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
 import { Snackbar, Paragraph } from 'react-native-paper';
+import LoadingScreen from '../../core/utils/common/loading-screen';
 
 function ForgotPassScreen({route, navigation}) {
     const [email, setEmail] = React.useState("");
@@ -52,6 +53,7 @@ function ForgotPassScreen({route, navigation}) {
         return re.test(email);
     };
     const getDetails = async () => {
+        hideHeader(true);
         if (email === '') {
             setSBVisible({
                 flag: true,
@@ -68,49 +70,40 @@ function ForgotPassScreen({route, navigation}) {
             return;
         }
         try {
-            props.handleLoading(true);
             const config = {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json, text/plain, */*',
                 },
             };
-            const body = JSON.stringify({email, password});
-            let mounted = true;
+            const body = JSON.stringify({email});
             // console.log(body);
-            /*const response = */await axios.post(Constants.BASE_URL + '/api/auth', body, config)
+            /*const response = */await axios.post(Constants.BASE_URL + '/api/auth/forgot', body, config)
                 .then(response => {
-                    // console.log(response.data);
+                    console.log(response.data);
                     if (!(JSON.stringify(response.data).includes('error'))) {
-                        const newToken = JSON.stringify(response.data.token);
-                        saveKeys(newToken);
-                        if (mounted) {
-                            // setPassword('');
-                            props.handleLoading(false);
-                            // props.handleSetScreen('landing');
-                            navigation.navigate('HomeScreen', {
-                                token: newToken,
-                                email: email
-                            });
-                        }
                     }
+                    hideHeader(false);
                 })
                 .catch(err => {
-                    props.handleLoading(false);
-                    console.log(`${err}`)
+                    console.log(err)
                     try {
                         const errors = err.response.data.errors;
                         if (errors) {
-                            errors.forEach(error => alert(error.msg));
+                            hideHeader(false);
+                            errors.forEach(error => setSBVisible({
+                                flag: true,
+                                sbText: error.msg,
+                                sbBGColor: 'red',
+                            }));
                         }
                     } catch (error) {
                         console.log(error);
                     }
                 });
-            return () => mounted = false;
         } catch (error) {
-            props.handleLoading(false);
             alert('oyy' + error);
+            hideHeader(false);
         }
     };
     let [fontsLoaded] = useFonts({
@@ -132,18 +125,21 @@ function ForgotPassScreen({route, navigation}) {
                     barStyle='light-content'
                     backgroundColor='#174052'
                 />
+                {isLoading ? 
+                <LoadingScreen/> : 
                 <View style={styles.mainContainerBG}>
                     <View style={styles.formContainer}>
-                        <Text style={lsStyles.mainLabel}>Forgot Password</Text>
-                        <Paragraph style={lsStyles.iconLabelContainer}>
+                        <Text style={styles.formMainLabel}>Forgot Password</Text>
+                        <Paragraph style={styles.formLabelWithIconContainer}>
+                            <Text style={styles.formLabelWithIconLabel}>  </Text>
                             <FontAwesomeIcon
-                                style={lsStyles.icon} 
+                                style={styles.formLabelIcon} 
                                 icon={ faEnvelope }
                             />
-                            <Text style={lsStyles.label}> Enter your email address, for verification</Text>
+                            <Text style={styles.formLabelWithIconLabel}> Enter your email address, for verification</Text>
                         </Paragraph>
                         <TextInput 
-                            style={lsStyles.emailInput}
+                            style={styles.formInput1}
                             onChangeText={onChangeEmailHandler}
                             value={email}
                             placeholder='Email Address'
@@ -153,15 +149,15 @@ function ForgotPassScreen({route, navigation}) {
                             activeOpacity={0.6}
                             onPress={getDetails}
                         >
-                            <View style={lsStyles.loginBtnContainer}>
-                                <Text style={lsStyles.forgotPassBtnText}>Send OTP</Text>
+                            <View style={styles.mainBtnContainer}>
+                                <Text style={styles.mainBtnText}>Send OTP</Text>
                             </View>
                         </TouchableOpacity>
-                        <Text style = {lsStyles.noAccount}>Don't have an account?
-                            <Text onPress={()=> navigation.navigate('SignupScreen', {})} style = {lsStyles.signupLabel}> Sign Up</Text>
+                        <Text style = {styles.textBtnLabel1}>Don't have an account?
+                            <Text onPress={()=> navigation.navigate('SignupScreen', {})} style = {styles.textBtnLabel}> Sign Up</Text>
                         </Text>
                     </View>
-                </View>
+                </View>}
                 <Snackbar
                     visible={snackbar.flag}
                     style={{backgroundColor: snackbar.sbBGColor}}
@@ -174,90 +170,6 @@ function ForgotPassScreen({route, navigation}) {
 };
 
 const lsStyles = StyleSheet.create({
-    mainLabel: {
-        fontSize: 36.0,
-        color: '#215a75',
-        fontFamily: 'Inter-Bold',
-        letterSpacing: 1.5,
-    },
-    iconLabelContainer: {
-        flexDirection: 'row',
-        marginTop: 16.0,
-        alignItems: 'center',
-    },
-    icon: {
-        // marginStart: 12.0,
-    },
-    label: {
-        fontSize: 20.0,
-        marginStart: 4.0,
-    },
-    forgotPassBtnContainer: {
-        marginTop: 8.0,
-        alignContent: 'center',
-        justifyContent: 'center',
-    },
-    forgotPassBtnText: {
-        width: 116.0,
-        height: 48.0,
-        borderRadius: 4.0,
-        backgroundColor: '#215a75',
-        color: '#fff',
-        textAlignVertical: 'center',
-        textAlign: 'center',
-        fontSize: 16.0,
-        fontFamily: 'Inter',
-        justifyContent: 'center',
-        ...Platform.select({
-            ios: {
-                lineHeight: 48.0, // as same as height
-            },
-            android: {}
-        })
-    },
-    emailInput: {
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 8.0,
-        marginTop: 16.0,
-        fontSize: 16.0,
-    },
-    passInputContainer: {
-        flexDirection: 'row',
-        marginTop: 8.0,
-        justifyContent: 'flex-end',
-    },
-    passInput: {
-        flex: 1, 
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 8.0,
-        fontSize: 16.0,
-    },
-    eyeIcon: {
-        marginEnd: 8.0,
-        alignSelf: 'center',
-        position: 'absolute',
-        right: 4.0,
-    },
-    noAccount: {
-        marginTop: 16.0,
-        fontSize: 20.0,
-    },
-    signupLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
-    },
-    forgotPass: {
-        marginTop: 8.0,
-        fontSize: 20.0,
-    },
-    forgotLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
-    },
 });
 
 export default ForgotPassScreen;

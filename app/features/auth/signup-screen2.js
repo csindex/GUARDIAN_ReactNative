@@ -146,23 +146,24 @@ function SignupScreen({route, navigation}) {
                 <ScrollView>
                     <View style={styles.mainContainerBG}>
                         <View style={styles.formContainer}>
-                            <Text style={lsStyles.mainLabel}>Register</Text>
-                            <View style={lsStyles.iconLabelContainer}>
+                            <Text style={styles.formMainLabel}>Register</Text>
+                            <Paragraph style={styles.formLabelWithIconContainer}>
+                                <Text style={styles.formLabelWithIconLabel}>  </Text>
                                 <FontAwesomeIcon
-                                    style={lsStyles.icon} 
+                                    style={styles.formLabelIcon} 
                                     icon={ faUserAlt }
                                 />
-                                <Text style={lsStyles.label}>Create Your Account</Text>
-                            </View>
+                                <Text style={styles.formLabelWithIconLabel}> Create Your Account</Text>
+                            </Paragraph>
                             <TextInput
-                                style={lsStyles.normalInput}
+                                style={styles.formInput1}
                                 value={name}
                                 name='name'
                                 placeholder='First Name'
                                 onChangeText={t => onChange(t, 'name')}
                             />
                             <TextInput 
-                                style={lsStyles.normalInput}
+                                style={styles.formInput1}
                                 // onChangeText={onChangeLNameHandler}
                                 value={lname}
                                 name='lname'
@@ -170,7 +171,7 @@ function SignupScreen({route, navigation}) {
                                 placeholder='Last Name'
                             />
                             <TextInput 
-                                style={lsStyles.normalInput}
+                                style={styles.formInput1}
                                 // onChangeText={onChangeMobileHandler}
                                 value={number}
                                 keyboardType='phone-pad'
@@ -179,11 +180,11 @@ function SignupScreen({route, navigation}) {
                                 placeholder='Mobile Number'
                                 maxLength={11}
                             />
-                            <Text style={lsStyles.formInputNote}>
+                            <Text style={styles.formInputNote}>
                                 This site uses your mobile number for authentication, sending alerts and other communication.
                             </Text>
                             <TextInput 
-                                style={lsStyles.normalInput}
+                                style={styles.formInput1}
                                 // onChangeText={onChangeEmailHandler}
                                 value={email}
                                 name='email'
@@ -191,27 +192,27 @@ function SignupScreen({route, navigation}) {
                                 keyboardType='email-address'
                                 placeholder='Email Address'
                             />
-                            <View style={lsStyles.passInputContainer}>
+                            <View style={styles.formInputWithIconContainer}>
                                 <TextInput 
-                                    style={lsStyles.passInput}
+                                    style={styles.formInputWithIcon}
                                     // onChangeText={onChangePasswordHandler}
                                     value={password}
                                     onChangeText={t => onChange(t, 'password')}
                                     placeholder='Password'
                                     secureTextEntry={hidePassword}
                                 />
-                                <View style={lsStyles.eyeIconContainer}>
+                                <View style={styles.formInputIconContainer}>
                                     <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
                                         <FontAwesomeIcon
-                                            style={lsStyles.eyeIcon} 
+                                            style={styles.formInputIcon} 
                                             icon={hidePassword ? faEye : faEyeSlash}
                                         />
                                     </TouchableOpacity>
                                 </View>
                             </View>
-                            <View style={lsStyles.passInputContainer}>
+                            <View style={styles.formInputWithIconContainer}>
                                 <TextInput 
-                                    style={lsStyles.passInput}
+                                    style={styles.formInputWithIcon}
                                     // onChangeText={onChangeCPasswordHandler}
                                     value={password2}
                                     name='password2'
@@ -219,10 +220,10 @@ function SignupScreen({route, navigation}) {
                                     placeholder='Confirm Password'
                                     secureTextEntry={hidePassword}
                                 />
-                                <View style={lsStyles.eyeIconContainer}>
+                                <View style={styles.formInputIconContainer}>
                                     <TouchableOpacity onPress={() => onTogglePassword(!hidePassword)}>
                                         <FontAwesomeIcon
-                                            style={lsStyles.eyeIcon} 
+                                            style={styles.formInputIcon} 
                                             icon={hidePassword ? faEye : faEyeSlash}
                                         />
                                     </TouchableOpacity>
@@ -233,13 +234,13 @@ function SignupScreen({route, navigation}) {
                                 activeOpacity={0.6}
                                 onPress={submit}
                             >
-                                <View style={lsStyles.loginBtnContainer}>
-                                        <Text style={lsStyles.loginBtnText}>Register</Text>
+                                <View style={styles.mainBtnContainer}>
+                                        <Text style={styles.mainBtnText}>Register</Text>
                                 </View>
                             </TouchableOpacity>
-                            <Text style={lsStyles.noAccount}>Already have an account?
+                            <Text style={styles.textBtnLabel1}>Already have an account?
                                 <Text 
-                                    style={lsStyles.signupLabel}
+                                    style={styles.textBtnLabel}
                                     onPress={() => navigation.navigate('LoginScreen', {})} 
                                 > Sign In</Text>
                             </Text>
@@ -258,135 +259,6 @@ function SignupScreen({route, navigation}) {
 };
 
 const lsStyles = StyleSheet.create({
-    mainLabel: {
-        fontSize: 36.0,
-        color: '#215a75',
-        fontFamily: 'Inter-Bold',
-        letterSpacing: 1.5,
-    },
-    iconLabelContainer: {
-        flexDirection: 'row',
-        marginTop: 16.0,
-        alignItems: 'center',
-        // backgroundColor: 'blue'
-    },
-    icon: {
-        marginStart: 12.0,
-    },
-    label: {
-        fontSize: 20.0,
-        marginStart: 4.0,
-    },
-    loginBtnContainer: {
-        height: hP('6%'),
-        width: wP('24%'),
-        marginTop: 8.0,
-        borderRadius: 4.0,
-        justifyContent: 'center',
-        backgroundColor: '#215a75',
-    },
-    loginBtnText: {
-        color: '#fff',
-        textAlignVertical: 'center',
-        textAlign: 'center',
-        fontSize: hP('1.9%'),
-        fontFamily: 'Inter',
-        ...Platform.select({
-            ios: {
-                lineHeight: 48.0, // same as height
-            },
-            android: {}
-        })
-    },
-    normalInput: {
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 4.0,
-        marginTop: 10.0,
-        fontSize: 16.0,
-    },
-    passInputContainer: {
-        flexDirection: 'row',
-        marginTop: 8.0,
-        justifyContent: 'flex-end',
-    },
-    passInput: {
-        flex: 1, 
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 4.0,
-        fontSize: 16.0,
-    },
-    eyeIconContainer: {
-        height: 36.0,
-        width: 36.0,
-        position: 'absolute',
-        right: 0.0,
-        justifyContent: 'center',
-        alignSelf: 'center',
-        // backgroundColor: 'blue'
-    },
-    eyeIcon: {
-        alignSelf: 'center',
-        // backgroundColor: '#1f1f1f'
-    },
-    noAccount: {
-        marginTop: 16.0,
-        fontSize: 20.0,
-    },
-    signupLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
-    },
-    forgotPass: {
-        marginTop: 8.0,
-        fontSize: 20.0,
-    },
-    forgotLabel: {
-        marginStart: 8.0,
-        color: '#215a75',
-    },
-    formInputNote: {
-        fontSize: hP('1.7%'), 
-        color: '#1f1f1f', 
-        marginTop: 4.0, 
-        fontFamily: 'Inter',
-    },
-    otpInput: {
-        height: 64.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 4.0,
-        marginTop: 10.0,
-        fontSize: hP('2.5%'),
-        textAlign: 'center',
-        textAlignVertical: 'center',
-        letterSpacing: wP('1.5%'),
-        alignItems: 'center',
-        alignSelf: 'stretch',
-    },
-    resendBtnContainer: {
-        marginTop: 4.0,
-        alignContent: 'center',
-        justifyContent: 'center',
-        alignSelf: 'center',
-    },
-    resendBtnText: {
-        width: 116.0,
-        height: 36.0,
-        borderRadius: 2.0,
-        borderColor: '#000',
-        borderWidth: 1.0,
-        backgroundColor: '#dddddd',
-        color: '#000',
-        textAlignVertical: 'center',
-        textAlign: 'center',
-        fontSize: 16.0,
-        fontFamily: 'Inter',
-        justifyContent: 'center',
-    },
 });
 
 export default SignupScreen;

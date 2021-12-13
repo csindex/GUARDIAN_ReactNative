@@ -19,7 +19,7 @@ import { faUserAlt, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
 import * as Constants from './../../core/utils/common/constants';
 import * as SecureStore from 'expo-secure-store';
 import { useNavigation } from '@react-navigation/native';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Paragraph } from 'react-native-paper';
 
 function LoginScreen() {
     const navigation = useNavigation();
@@ -107,14 +107,14 @@ function LoginScreen() {
                 })
                 .catch(err => {
                     // props.handleLoading(false);
-                    console.log(`${err}`)
+                    // console.log(`${err}`)
                     try {
                         const errors = err.response.data.errors;
                         if (errors) {
                             errors.forEach(error => alert(error.msg));
                         }
                     } catch (error) {
-                        console.log(error);
+                        // console.log(error);
                     }
                 });
             return () => mounted = false;
@@ -177,33 +177,38 @@ function LoginScreen() {
                 <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex: 1}}>
                     <View style={styles.mainContainerBG}>
                         <View style={styles.formContainer}>
-                            <Text style={lsStyles.mainLabel}>Sign In</Text>
-                            <View style={lsStyles.iconLabelContainer}>
+                            <Text style={styles.formMainLabel}>Sign In</Text>
+                            <Paragraph style={styles.formLabelWithIconContainer}>
+                                <Text style={styles.formLabelWithIconLabel}>  </Text>
                                 <FontAwesomeIcon
-                                    style={lsStyles.icon} 
+                                    style={styles.formLabelIcon} 
                                     icon={ faUserAlt }
                                 />
-                                <Text style={lsStyles.label}>Sign into your Account</Text>
-                            </View>
+                                <Text style={styles.formLabelWithIconLabel}> Sign into your Account</Text>
+                            </Paragraph>
                             <TextInput 
-                                style={lsStyles.emailInput}
+                                style={styles.formInput1}
                                 onChangeText={onChangeEmailHandler}
                                 value={email}
                                 placeholder='Email Address'
                             />
-                            <View style={lsStyles.passInputContainer}>
+                            <View style={styles.formInputWithIconContainer}>
                                 <TextInput 
-                                    style={lsStyles.passInput}
+                                    style={styles.formInputWithIcon}
                                     onChangeText={onChangePasswordHandler}
                                     value={password}
                                     placeholder='Password'
                                     secureTextEntry={hidePassword}
                                 />
-                                <FontAwesomeIcon
-                                    style={lsStyles.eyeIcon} 
-                                    icon={hidePassword ? faEye : faEyeSlash}
-                                    onPress={() => onTogglePassword(!hidePassword)}
-                                />
+                                <View style={styles.formInputIconContainer}>
+                                    <TouchableOpacity>
+                                        <FontAwesomeIcon
+                                            style={styles.formInputIcon} 
+                                            icon={hidePassword ? faEye : faEyeSlash}
+                                            onPress={() => onTogglePassword(!hidePassword)}
+                                        />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                             <TouchableOpacity
                                 style={{alignSelf:'baseline'}}
@@ -227,7 +232,7 @@ function LoginScreen() {
                     visible={sbVisible}
                     style={{backgroundColor: sbBGColor}}
                     onDismiss={onDismissSnackbar}
-                    duration={4500}
+                    duration={1500}
                 >{sbText}</Snackbar>
             </SafeAreaView>
         );
@@ -235,75 +240,6 @@ function LoginScreen() {
 };
 
 const lsStyles = StyleSheet.create({
-    mainLabel: {
-        fontSize: 36.0,
-        color: '#215a75',
-        fontFamily: 'Inter-Bold',
-        letterSpacing: 1.5,
-    },
-    iconLabelContainer: {
-        flexDirection: 'row',
-        marginTop: 16.0,
-        alignItems: 'center',
-    },
-    icon: {
-        marginStart: 16.0,
-    },
-    label: {
-        fontSize: 20.0,
-        marginStart: 4.0,
-    },
-    loginBtnContainer: {
-        marginTop: 8.0,
-        alignContent: 'center',
-        justifyContent: 'center',
-    },
-    loginBtnText: {
-        width: 116.0,
-        height: 48.0,
-        borderRadius: 4.0,
-        backgroundColor: '#215a75',
-        color: '#fff',
-        textAlignVertical: 'center',
-        textAlign: 'center',
-        fontSize: 16.0,
-        fontFamily: 'Inter',
-        justifyContent: 'center',
-        ...Platform.select({
-            ios: {
-                lineHeight: 48.0, // as same as height
-            },
-            android: {}
-        })
-    },
-    emailInput: {
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 8.0,
-        marginTop: 16.0,
-        fontSize: 16.0,
-    },
-    passInputContainer: {
-        flexDirection: 'row',
-        marginTop: 8.0,
-        justifyContent: 'flex-end',
-    },
-    passInput: {
-        flex: 1, 
-        height: 48.0,
-        borderWidth: 1,
-        padding: 10,
-        borderRadius: 8.0,
-        fontSize: 16.0,
-    },
-    eyeIcon: {
-        marginEnd: 8.0,
-        alignSelf: 'center',
-        position: 'absolute',
-        right: 4.0,
-        // backgroundColor: '#1f1f1f'
-    },
 });
 
 export default LoginScreen;

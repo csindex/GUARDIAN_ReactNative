@@ -123,6 +123,17 @@ function App() {
                     }
                 />
                 <Stack.Screen 
+                    name="ForgotPassOtpScreen" 
+                    component={Screens.ForgotPassOtpScreen}
+                    options={
+                        ({route}) => ({
+                            headerStyle: {
+                                backgroundColor: '#174052'
+                            },
+                        })
+                    }
+                />
+                <Stack.Screen 
                     name="HomeScreen" 
                     component={Screens.HomeScreen} 
                     options={{headerShown: false}}

@@ -29,7 +29,7 @@ import {
 } from 'react-native-responsive-screen';
 import LoadingScreen from './../../core/utils/common/loading-screen';
 
-function SignupOtpScreen({route, navigation}) {
+function ForgotPassOtpScreen({route, navigation}) {
     const { data } = route.params;
     const hideHeader = (flag) => {
         navigation.setOptions({
@@ -44,7 +44,7 @@ function SignupOtpScreen({route, navigation}) {
     });
     const generate = Math.floor(Math.random() * (772881 - 111181 + 1) + 111181);
     const [otp, setOTP] = React.useState(generate);
-    const msg = `Hi ${data.name} ${data.lname}, Proceed with your registration for GUARDIAN Account.` +
+    const msg = `Hi ${data.name} ${data.lname}, Proceed with your Change Password for GUARDIAN Account.` +
         `Your One-Time PIN is ${otp}. OTP will expire in 15 minutes. If you did not initiate` +
         ' this request, please call your Operation Center Administrator.';
     // console.log(msg, ' timer ', timer);
@@ -228,7 +228,7 @@ function SignupOtpScreen({route, navigation}) {
                     try {
                         const errors = err.response.data.errors;
                         if (errors) {
-                            errors.forEach(error => navigation.navigate('SignupScreen', {
+                            errors.forEach(error => navigation.navigate('ForgotPassScreen', {
                                 sb: JSON.stringify({
                                     flag: true,
                                     sbText: error.msg,
@@ -453,4 +453,4 @@ const lsStyles = StyleSheet.create({
     },
 });
 
-export default SignupOtpScreen;
+export default ForgotPassOtpScreen;
